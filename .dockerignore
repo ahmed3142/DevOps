@@ -1,0 +1,14 @@
+.git
+.github
+node_modules
+.next
+coverage
+npm-debug.log*
+.env*
+infra
+tests
+vitest.config.ts
+compose.yml
+Dockerfile
+.dockerignore
+*.md
