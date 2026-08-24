@@ -16,7 +16,7 @@ PW_DIR="$(find "$HOME/.npm/_npx" -maxdepth 3 -type d -name playwright 2>/dev/nul
 
 mkdir -p "$(dirname "$OUT")"
 
-if [ -n "$PW_DIR" ] && NODE_PATH="$(dirname "$PW_DIR")" node build.mjs "$SRC" "$OUT" "$LABEL"; then
+if [ -n "$PW_DIR" ] && PLAYWRIGHT_PKG="$PW_DIR" node build.mjs "$SRC" "$OUT" "$LABEL"; then
   exit 0
 fi
 

@@ -1,9 +1,30 @@
 // Renders report HTML to PDF via Playwright's Chromium so that the PDF
-// carries a proper page-number footer. Falls back handled by build.sh.
-import { chromium } from "playwright";
+// carries a proper page-number footer.
+//
+// Playwright is resolved from an absolute path (ESM ignores NODE_PATH), supplied
+// by build.sh in PLAYWRIGHT_PKG or discovered from the usual install locations.
 import { pathToFileURL } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+import os from "node:os";
+
+function resolvePlaywright() {
+  const candidates = [];
+  if (process.env.PLAYWRIGHT_PKG) candidates.push(process.env.PLAYWRIGHT_PKG);
+  candidates.push(
+    path.join(process.cwd(), "node_modules", "playwright"),
+    "/opt/homebrew/lib/node_modules/playwright",
+    "/usr/local/lib/node_modules/playwright",
+    path.join(os.homedir(), "node_modules", "playwright"),
+  );
+  for (const dir of candidates) {
+    for (const entry of ["index.mjs", "index.js"]) {
+      const file = path.join(dir, entry);
+      if (fs.existsSync(file)) return pathToFileURL(file).href;
+    }
+  }
+  return null;
+}
 
 const src = process.argv[2] ?? "report.html";
 const out = process.argv[3] ?? "out/DevOps_Delivery_Strategy.pdf";
@@ -13,6 +34,15 @@ if (!fs.existsSync(src)) {
   console.error(`source not found: ${src}`);
   process.exit(1);
 }
+
+const pkg = resolvePlaywright();
+if (!pkg) {
+  console.error("playwright package not found");
+  process.exit(1);
+}
+
+const { chromium } = await import(pkg);
+
 fs.mkdirSync(path.dirname(out), { recursive: true });
 
 const browser = await chromium.launch();
