@@ -5,6 +5,7 @@ Two passes: the parts are inserted, the assessed word count is measured on the
 result, and the count is then substituted into the cover page so the declared
 figure is always accurate.
 """
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -13,9 +14,26 @@ ROOT = Path(__file__).parent
 PART_FILES = [f"part{n}.html" for n in range(1, 7)]
 
 
+FIGURE_RE = re.compile(r"<!--\s*FIGURE:([a-z0-9\-]+)\s*-->")
+
+
+def inline_figures(html: str) -> str:
+    """Replaces <!-- FIGURE:name --> markers with figures/name.html."""
+
+    def replace(match: re.Match) -> str:
+        path = ROOT / "figures" / f"{match.group(1)}.html"
+        if not path.exists():
+            raise SystemExit(f"missing figure: {path}")
+        return path.read_text(encoding="utf-8")
+
+    return FIGURE_RE.sub(replace, html)
+
+
 def load(name: str) -> str:
     path = ROOT / "parts" / name
-    return path.read_text(encoding="utf-8") if path.exists() else ""
+    if not path.exists():
+        return ""
+    return inline_figures(path.read_text(encoding="utf-8"))
 
 
 def main() -> int:
