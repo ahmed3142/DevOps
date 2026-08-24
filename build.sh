@@ -16,6 +16,11 @@ PW_DIR="$(find "$HOME/.npm/_npx" -maxdepth 3 -type d -name playwright 2>/dev/nul
 
 mkdir -p "$(dirname "$OUT")"
 
+# Regenerate report.html from template.html + parts/ before rendering.
+if [ "$SRC" = "report.html" ] && [ -f assemble.py ]; then
+  python3 assemble.py
+fi
+
 if [ -n "$PW_DIR" ] && PLAYWRIGHT_PKG="$PW_DIR" node build.mjs "$SRC" "$OUT" "$LABEL"; then
   exit 0
 fi
