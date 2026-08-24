@@ -5,6 +5,8 @@
 
   <h3>3.1 Pipeline shape</h3>
   <p>Figure 2 sets out the target pipeline. A push triggers static analysis, unit tests and a production build; a container image is then built once and tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is only then promoted to production — the identical artefact, nothing rebuilt per environment.</p>
+  <!-- FIGURE:fig2-pipeline -->
+
   <p><strong>Build once, deploy many</strong> is the most important property of the design. If each environment compiles its own artefact, the thing tested in staging is not the thing running in production, and the team argues about a difference nobody can reproduce — Nimbus's most common failure mode. The supporting repository implements the first half of this pipeline today: every push runs lint, tests and a production build, and a dependent job builds the image from the same commit.</p>
 
   <h3>3.2 Automated testing</h3>

@@ -1,0 +1,107 @@
+<figure>
+<svg viewBox="0 0 660 300" width="100%" role="img" aria-label="Target CI/CD pipeline from commit through quality gates to blue-green production release">
+  <defs>
+    <marker id="pl-arrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L6,4 L0,7 z" fill="#55606e"/>
+    </marker>
+    <marker id="pl-arrow-red" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L6,4 L0,7 z" fill="#b8442c"/>
+    </marker>
+  </defs>
+  <style>
+    .pl-lane  { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#8a94a3; letter-spacing:.08em; }
+    .pl-box   { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+    .pl-sub   { font: 7.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#55606e; }
+    .pl-gate  { font: 600 7.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#ffffff; }
+    .pl-note  { font: italic 7.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#b8442c; }
+    .pl-white { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#ffffff; }
+  </style>
+
+  <!-- lane 1: integrate -->
+  <text class="pl-lane" x="11" y="14">CONTINUOUS INTEGRATION — EVERY PUSH, TEN-MINUTE BUDGET</text>
+  <rect x="11" y="22" width="638" height="66" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+
+  <rect x="22" y="36" width="86" height="38" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="pl-box" x="65" y="52" text-anchor="middle">Commit</text>
+  <text class="pl-sub" x="65" y="64" text-anchor="middle">short-lived branch</text>
+
+  <rect x="124" y="36" width="86" height="38" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="pl-box" x="167" y="52" text-anchor="middle">Pull request</text>
+  <text class="pl-sub" x="167" y="64" text-anchor="middle">review + protection</text>
+
+  <rect x="226" y="36" width="76" height="38" rx="3" fill="#14315c"/>
+  <text class="pl-gate" x="264" y="52" text-anchor="middle">Lint &amp; types</text>
+  <text class="pl-gate" x="264" y="64" text-anchor="middle" opacity="0.75">gate</text>
+
+  <rect x="318" y="36" width="76" height="38" rx="3" fill="#14315c"/>
+  <text class="pl-gate" x="356" y="52" text-anchor="middle">Unit + integ.</text>
+  <text class="pl-gate" x="356" y="64" text-anchor="middle" opacity="0.75">gate</text>
+
+  <rect x="410" y="36" width="76" height="38" rx="3" fill="#14315c"/>
+  <text class="pl-gate" x="448" y="52" text-anchor="middle">Scanning</text>
+  <text class="pl-gate" x="448" y="64" text-anchor="middle" opacity="0.75">gate</text>
+
+  <rect x="502" y="30" width="136" height="50" rx="3" fill="#b8442c"/>
+  <text class="pl-white" x="570" y="48" text-anchor="middle">Container image</text>
+  <text class="pl-white" x="570" y="61" text-anchor="middle" opacity="0.85">tagged with commit SHA</text>
+  <text class="pl-white" x="570" y="72" text-anchor="middle" opacity="0.85">built once</text>
+
+  <g stroke="#55606e" stroke-width="0.9" marker-end="url(#pl-arrow)">
+    <line x1="108" y1="55" x2="122" y2="55"/>
+    <line x1="210" y1="55" x2="224" y2="55"/>
+    <line x1="302" y1="55" x2="316" y2="55"/>
+    <line x1="394" y1="55" x2="408" y2="55"/>
+    <line x1="486" y1="55" x2="500" y2="55"/>
+  </g>
+
+  <!-- flow down -->
+  <path d="M570,80 L570,100 L6,100 L6,172 L18,172" stroke="#b8442c" stroke-width="1.1" fill="none" marker-end="url(#pl-arrow-red)"/>
+  <text class="pl-note" x="560" y="95" text-anchor="end">the same artefact is promoted — never rebuilt</text>
+
+  <!-- lane 2: deliver -->
+  <text class="pl-lane" x="11" y="126">CONTINUOUS DELIVERY — PROMOTION OF ONE IMMUTABLE ARTEFACT</text>
+  <rect x="11" y="134" width="638" height="76" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+
+  <rect x="22" y="150" width="96" height="44" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="pl-box" x="70" y="168" text-anchor="middle">Staging</text>
+  <text class="pl-sub" x="70" y="181" text-anchor="middle">auto-deployed</text>
+
+  <rect x="134" y="150" width="96" height="44" rx="3" fill="#14315c"/>
+  <text class="pl-gate" x="182" y="168" text-anchor="middle">Smoke + E2E</text>
+  <text class="pl-gate" x="182" y="181" text-anchor="middle" opacity="0.75">gate</text>
+
+  <rect x="246" y="150" width="96" height="44" rx="3" fill="#14315c"/>
+  <text class="pl-gate" x="294" y="168" text-anchor="middle">Approval</text>
+  <text class="pl-gate" x="294" y="181" text-anchor="middle" opacity="0.75">automated later</text>
+
+  <rect x="358" y="144" width="140" height="56" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="1.2"/>
+  <text class="pl-box" x="428" y="160" text-anchor="middle">Blue-green release</text>
+  <rect x="368" y="166" width="58" height="24" rx="2" fill="#dfe5ec" stroke="#c3ccd8" stroke-width="0.6"/>
+  <text class="pl-sub" x="397" y="181" text-anchor="middle">blue (live)</text>
+  <rect x="432" y="166" width="58" height="24" rx="2" fill="#14315c"/>
+  <text class="pl-gate" x="461" y="181" text-anchor="middle">green (new)</text>
+
+  <rect x="514" y="150" width="124" height="44" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="pl-box" x="576" y="168" text-anchor="middle">Observe SLOs</text>
+  <text class="pl-sub" x="576" y="181" text-anchor="middle">error-budget burn</text>
+
+  <g stroke="#55606e" stroke-width="0.9" marker-end="url(#pl-arrow)">
+    <line x1="118" y1="172" x2="132" y2="172"/>
+    <line x1="230" y1="172" x2="244" y2="172"/>
+    <line x1="342" y1="172" x2="356" y2="172"/>
+    <line x1="498" y1="172" x2="512" y2="172"/>
+  </g>
+
+  <!-- rollback path -->
+  <path d="M576,194 L576,226 L428,226 L428,202" stroke="#b8442c" stroke-width="1.2" fill="none" stroke-dasharray="4 2.5" marker-end="url(#pl-arrow-red)"/>
+  <text class="pl-note" x="470" y="238" text-anchor="middle">automatic rollback — shift traffic back to blue in seconds</text>
+
+  <!-- failure return path -->
+  <path d="M182,194 L182,258 L65,258 L65,78" stroke="#b8442c" stroke-width="1" fill="none" stroke-dasharray="3 2" marker-end="url(#pl-arrow-red)"/>
+  <text class="pl-note" x="192" y="262">any red gate stops the line and returns to the author</text>
+
+  <line x1="11" y1="276" x2="649" y2="276" stroke="#dfe5ec" stroke-width="0.8"/>
+  <text class="pl-sub" x="11" y="290">Implemented today in the supporting repository: commit → lint → unit tests → production build → container image build.</text>
+</svg>
+<figcaption><b>Figure 2</b> — Target delivery pipeline. One image is built from each commit and promoted unchanged through staging to a blue-green production release; every gate can stop the line, and rollback is a traffic shift rather than a redeployment.</figcaption>
+</figure>
