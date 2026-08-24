@@ -1,0 +1,41 @@
+<section class="part" data-part="Part 1 — Current-State Analysis">
+  <div class="partlabel">Part 1</div>
+  <h2>Current-State Analysis and the Case for DevOps</h2>
+  <p class="lead">Lectures 1 and 3 — DevOps culture, value flow, and the measurement baseline.</p>
+
+  <h3>1.1 The organisation</h3>
+  <p>Nimbus Ltd. is a fifteen-person start-up whose product, <em>Nimbus Notes</em>, is a subscription knowledge base used by roughly four hundred small-business teams. Seven engineers build it. It runs on two Amazon EC2 instances that were configured by hand over SSH when the company was founded and have been edited in place ever since. Growth has been rapid and entirely unplanned for: the delivery process that suited three people in one room is now the constraint on a company preparing for a funding round and a doubling of the engineering team.</p>
+
+  <h3>1.2 How work flows today</h3>
+  <p>A change begins as a ticket, is developed on a branch that typically lives two to three weeks, is reviewed informally if at all, is checked manually against a spreadsheet of regression steps, and finally reaches production when Sam — the founding engineer — runs <code>deploy.sh</code> from a laptop over a VPN. Figure 1 maps that value stream. Seventeen calendar days elapse between commitment and production, but only about two and a half of those days involve anyone touching the change; the flow efficiency is roughly fifteen per cent.</p>
+
+  <div class="callout">
+    <span class="title">Why the framing matters</span>
+    <p>If eighty-five per cent of lead time is queueing rather than working, then hiring more developers will lengthen the queues rather than shorten them. The constraint is the process, not the capacity — which is precisely the insight that justifies investing in delivery infrastructure before investing in headcount.</p>
+  </div>
+
+  <h3>1.3 Waste, handoffs and silos</h3>
+  <p>Reading the same value stream through the seven wastes of Lean turns a set of complaints into a diagnosis. <strong>Partially done work</strong> accumulates in branches that sit unmerged and unverified for weeks. <strong>Handoffs</strong> occur three times per change — developer to tester to deployer — and each one discards context that is then reconstructed by conversation. <strong>Waiting</strong> is the single largest category, because every release is queued behind one person's calendar. <strong>Defects</strong> escape at a rate of one corrective deploy for every four releases. <strong>Task switching</strong> costs Nimbus twice over, since the engineer interrupted by deployments and incidents is the same engineer whose feature work then stalls. <strong>Relearning</strong> happens during every outage, because no runbooks exist and production knowledge is re-derived under pressure. <strong>Over-processing</strong> shows up as a manual regression checklist re-executed identically every release.</p>
+  <p>The silo at Nimbus is not the classic wall between a development department and an operations department; the company is too small to have either. It is a knowledge silo. One engineer understands how production is wired, which makes that person simultaneously the bottleneck, the single point of failure, and the person who can never take a holiday. The organisational risk is a bus factor of one, and it is invisible on any conventional project plan.</p>
+
+  <h3>1.4 Why DevOps, and where CALMS falls short</h3>
+  <p>The CALMS model describes what a mature organisation looks like: a <strong>Culture</strong> of shared ownership rather than blame; <strong>Automation</strong> of repetitive, error-prone work; <strong>Lean</strong> flow in small batches; <strong>Measurement</strong> of outcomes; and <strong>Sharing</strong> of knowledge across roles. Nimbus scores poorly on all five, and the model usefully explains why the individual symptoms are connected rather than coincidental.</p>
+  <p>CALMS is nevertheless a description, not a plan. It offers no sequence, and a team reading it naively will begin with Automation because tooling is the most tangible letter — automating a process nobody has measured and nobody understands. It is also silent on two forces that dominate modern delivery: cost and security, which is why FinOps and DevSecOps had to be appended to the model rather than derived from it. At Nimbus the correct entry point is Measurement, because a start-up that cannot evidence improvement cannot defend the investment that produces it, and Sharing, because the bus factor is the acute risk. Automation follows from those two, not before them.</p>
+
+  <h3>1.5 The baseline that makes improvement provable</h3>
+  <p>The four DORA metrics were reconstructed from a quarter of Git history, deployment notes and incident channel messages. A fifth, unit cost, is added because the scenario's uncontrolled cloud spend is a delivery problem in disguise.</p>
+
+  <table class="data">
+    <caption>Table 1 — Baseline delivery metrics and improvement targets</caption>
+    <thead><tr><th>Metric</th><th>Baseline</th><th>DORA band</th><th>6-month target</th><th>12-month target</th></tr></thead>
+    <tbody>
+      <tr><td>Deployment frequency</td><td class="num">2.1 / month</td><td>Low</td><td class="num">2 / week</td><td class="num">Daily</td></tr>
+      <tr><td>Lead time for change</td><td class="num">17 days</td><td>Low</td><td class="num">3 days</td><td class="num">&lt; 1 day</td></tr>
+      <tr><td>Change failure rate</td><td class="num">25%</td><td>Low</td><td class="num">15%</td><td class="num">&lt; 10%</td></tr>
+      <tr><td>Mean time to restore</td><td class="num">4h 10m</td><td>Low</td><td class="num">1 hour</td><td class="num">&lt; 30 min</td></tr>
+      <tr><td>Infrastructure cost per tenant</td><td class="num">€2.14 / month</td><td>—</td><td class="num">€1.70</td><td class="num">€1.40</td></tr>
+    </tbody>
+  </table>
+
+  <p>These numbers convert the argument from preference into evidence. They also carry direct commercial weight: investors conducting technical due diligence ask how often a company can ship and how quickly it recovers; enterprise prospects ask for the same figures before signing. A quarter of releases failing is not only an engineering embarrassment, it is a churn driver and a discount the sales team pays for at every renewal.</p>
+</section>
