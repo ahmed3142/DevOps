@@ -1,45 +1,58 @@
 # Nimbus Notes
 
-A deliberately tiny Next.js notes service, built as the **artefact repository (Deliverable 2)** for the Learnkey Institute assessment *"Design, Justify and Present a DevOps Delivery Strategy"* (Scenario B — a SaaS start-up outgrowing manual scripts). The application itself is trivial by design: the graded material is the delivery machinery around it — the version-control workflow, the CI pipeline, and the container/infrastructure artefacts described below.
+A small Next.js notes service. It is the artefact repository for the Learnkey Institute DevOps assessment (Scenario B) — the application is deliberately trivial, and the point of the repository is the delivery tooling around it.
 
-## How this maps to the brief
+## Stack
 
-| Brief requirement | Where to look |
-| --- | --- |
-| Sensible commit history, at least one branch, a merge, a tagged release | `git log --graph --oneline` — small conventional commits, `feature/*` branches merged with merge commits, annotated release tag `v1.0.0` |
-| Working CI workflow that builds and runs tests | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
-| Container / infrastructure artefact with explanation | [Dockerfile](Dockerfile), [compose.yml](compose.yml), [infra/main.tf](infra/main.tf) — explanations below |
+Next.js 16 (App Router, TypeScript) · Vitest · Docker · GitHub Actions
 
-## Running it
+## Commands
 
 ```bash
-npm ci            # install exact locked dependencies
-npm run dev       # local development server on :3000
-npm test          # unit tests (Vitest)
+npm ci            # install from the lockfile
+npm run dev       # development server on :3000
+npm test          # unit tests
 npm run lint      # ESLint
 npm run build     # production build
 
-docker compose up --build   # containerised production build on :3000
+docker compose up --build   # containerised build on :3000
 ```
 
 ## API
 
 | Route | Method | Behaviour |
 | --- | --- | --- |
-| `/api/health` | GET | Liveness probe: status, running version, uptime |
-| `/api/notes` | GET | List notes (in-memory) |
-| `/api/notes` | POST | Create a note — `{"text": "..."}`; 400 if `text` missing/blank |
+| `/api/health` | GET | Status, running version, uptime |
+| `/api/notes` | GET | List notes |
+| `/api/notes` | POST | Create a note — `{"text": "..."}`; 400 if `text` is missing or blank |
 
-## Artefact notes
+Notes are held in memory and reset when the process restarts.
 
-**CI workflow (`.github/workflows/ci.yml`).** Every push and pull request runs the same gate: install from the lockfile, lint, unit tests, then a production build; a second job builds the container image from the same commit. This means broken code is caught in minutes on a disposable runner instead of during a manual deploy, and the image that ships is produced by the pipeline, not by whoever happens to have a working laptop. Image publishing to a registry is intentionally left as the next step of the delivery strategy rather than baked in here.
+## Layout
 
-**Dockerfile.** A three-stage build: dependencies are installed from the lockfile only, the production bundle is compiled, and the final image contains nothing but the Next.js standalone server, running as an unprivileged user on a minimal Alpine base. The same image runs identically on a laptop, in CI, and in production — which is the direct fix for the "works on my machine / environments drift" problem in the scenario.
+| Path | Contents |
+| --- | --- |
+| `app/api/health/route.ts` | Health endpoint; reports the version from `package.json` |
+| `app/api/notes/route.ts` | Notes list and create routes |
+| `lib/notes.ts` | In-memory store |
+| `tests/` | Vitest unit tests for the store and both routes |
+| `.github/workflows/ci.yml` | CI pipeline |
+| `Dockerfile`, `.dockerignore` | Three-stage container build |
+| `compose.yml` | Local run with a health check |
+| `infra/main.tf` | Terraform snippet — illustrative only, not applied to any account |
 
-**Compose file (`compose.yml`).** Defines how the container runs as code: port mapping, restart policy, and a healthcheck that polls `/api/health`. The healthcheck is what turns "the container is running" into "the service is actually answering", and is the hook an orchestrator or deploy script uses to decide whether a new release is healthy or should be rolled back.
+## CI
 
-**Terraform snippet (`infra/main.tf`).** Illustrative only — it is not applied to any real cloud account. It shows how the production host would be captured as reviewable, versioned code instead of a hand-configured server: the instance size lives in one obvious place, environments are stamped from the same definition, and every resource carries `Owner`/`CostCentre`/`Environment` tags so the cloud bill can be attributed (the FinOps practice argued in the report).
+`.github/workflows/ci.yml` runs on every push and pull request:
+
+1. `build-test` — install from the lockfile, lint, unit tests, production build
+2. `docker-image` — builds the container image from the same commit (build only, no registry push)
 
 ## Releases
 
-Releases are annotated tags (`v1.0.0`) on `main`. The health endpoint reports the running version, so any environment can be traced back to the exact tagged commit that produced it.
+Releases are annotated tags on `main` (`v1.0.0`). `/api/health` returns the running version, so a deployed environment can be traced back to the commit that produced it.
+
+```bash
+git log --graph --oneline --all
+git tag -n1
+```
