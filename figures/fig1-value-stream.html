@@ -1,0 +1,81 @@
+<figure>
+<svg viewBox="0 0 660 196" width="100%" role="img" aria-label="Current-state value stream map showing 17 days of lead time of which 2.5 days is work">
+  <defs>
+    <marker id="vsm-arrow" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L6,4 L0,7 z" fill="#8a94a3"/>
+    </marker>
+  </defs>
+  <style>
+    .vsm-name  { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+    .vsm-proc  { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#1a1a1a; }
+    .vsm-wait  { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#b8442c; }
+    .vsm-key   { font: 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#55606e; }
+    .vsm-bar   { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    .vsm-sum   { font: 600 10px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+  </style>
+
+  <!-- stage boxes -->
+  <g>
+    <rect x="11"  y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="60"  y="24" text-anchor="middle">Backlog</text>
+    <text class="vsm-proc" x="60"  y="39" text-anchor="middle">work 0.2 d</text>
+    <text class="vsm-wait" x="60"  y="52" text-anchor="middle">wait 3.0 d</text>
+
+    <rect x="119" y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="168" y="24" text-anchor="middle">Development</text>
+    <text class="vsm-proc" x="168" y="39" text-anchor="middle">work 1.4 d</text>
+    <text class="vsm-wait" x="168" y="52" text-anchor="middle">wait 0.5 d</text>
+
+    <rect x="227" y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="276" y="24" text-anchor="middle">Review</text>
+    <text class="vsm-proc" x="276" y="39" text-anchor="middle">work 0.2 d</text>
+    <text class="vsm-wait" x="276" y="52" text-anchor="middle">wait 4.0 d</text>
+
+    <rect x="335" y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="384" y="24" text-anchor="middle">Manual QA</text>
+    <text class="vsm-proc" x="384" y="39" text-anchor="middle">work 0.5 d</text>
+    <text class="vsm-wait" x="384" y="52" text-anchor="middle">wait 2.0 d</text>
+
+    <rect x="443" y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="492" y="24" text-anchor="middle">Deploy window</text>
+    <text class="vsm-proc" x="492" y="39" text-anchor="middle">work 0.1 d</text>
+    <text class="vsm-wait" x="492" y="52" text-anchor="middle">wait 3.0 d</text>
+
+    <rect x="551" y="8" width="98" height="54" rx="3" fill="#f2f5f9" stroke="#14315c" stroke-width="0.8"/>
+    <text class="vsm-name" x="600" y="24" text-anchor="middle">Verify in prod</text>
+    <text class="vsm-proc" x="600" y="39" text-anchor="middle">work 0.1 d</text>
+    <text class="vsm-wait" x="600" y="52" text-anchor="middle">wait 2.0 d</text>
+  </g>
+
+  <!-- connectors -->
+  <g stroke="#8a94a3" stroke-width="0.9" marker-end="url(#vsm-arrow)">
+    <line x1="109" y1="35" x2="118" y2="35"/>
+    <line x1="217" y1="35" x2="226" y2="35"/>
+    <line x1="325" y1="35" x2="334" y2="35"/>
+    <line x1="433" y1="35" x2="442" y2="35"/>
+    <line x1="541" y1="35" x2="550" y2="35"/>
+  </g>
+
+  <!-- proportional timeline: 638px = 17 days -->
+  <text class="vsm-key" x="11" y="88">Elapsed lead time, drawn to scale</text>
+  <rect x="11"    y="96" width="93.8"  height="24" fill="#14315c"/>
+  <rect x="104.8" y="96" width="544.2" height="24" fill="#dfe5ec" stroke="#c3ccd8" stroke-width="0.6"/>
+  <text class="vsm-bar" x="57" y="112" text-anchor="middle" fill="#ffffff">2.5 d</text>
+  <text class="vsm-bar" x="377" y="112" text-anchor="middle" fill="#55606e">14.5 days spent waiting — queues, handoffs and one person's calendar</text>
+
+  <!-- key -->
+  <g>
+    <rect x="11" y="134" width="10" height="10" fill="#14315c"/>
+    <text class="vsm-key" x="26" y="143">Value-adding work</text>
+    <rect x="126" y="134" width="10" height="10" fill="#dfe5ec" stroke="#c3ccd8" stroke-width="0.6"/>
+    <text class="vsm-key" x="141" y="143">Waiting</text>
+  </g>
+
+  <!-- summary -->
+  <line x1="11" y1="158" x2="649" y2="158" stroke="#c3ccd8" stroke-width="0.8"/>
+  <text class="vsm-sum" x="11"  y="177">Lead time 17.0 days</text>
+  <text class="vsm-sum" x="240" y="177">Process time 2.5 days</text>
+  <text class="vsm-sum" x="470" y="177" fill="#b8442c">Flow efficiency 15%</text>
+</svg>
+<figcaption><b>Figure 1</b> — Current-state value stream for a typical change at Nimbus. Eighty-five per cent of lead time is queueing rather than working, so the constraint is the process rather than the number of engineers.</figcaption>
+</figure>
