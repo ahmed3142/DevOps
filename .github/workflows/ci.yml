@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "feature/**"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-test:
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+
+  docker-image:
+    name: Build container image
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # Build-only on CI: publishing to a registry is a deliberate later
+      # step in the delivery strategy (see report, Part 3).
+      - name: Build Docker image
+        run: docker build -t nimbus-notes:${{ github.sha }} .
