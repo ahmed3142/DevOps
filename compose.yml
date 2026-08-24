@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    image: nimbus-notes:local
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    healthcheck:
+      # wget ships with the alpine base image; curl does not.
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
