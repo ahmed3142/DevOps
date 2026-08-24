@@ -37,11 +37,11 @@ def main() -> int:
     )
     total = "0"
     for line in result.stdout.splitlines():
-        if line.startswith("TOTAL"):
-            total = line.split()[-1]
+        if line.startswith("TOTAL_WORDS="):
+            total = line.split("=", 1)[1]
     out.write_text(html.replace("WORDCOUNT_PLACEHOLDER", f"{int(total):,}"), encoding="utf-8")
 
-    print(result.stdout)
+    print("\n".join(l for l in result.stdout.splitlines() if not l.startswith("TOTAL_WORDS=")))
     print(f"assembled: report.html ({total} assessed words)")
     return 0
 

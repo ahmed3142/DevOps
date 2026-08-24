@@ -82,6 +82,9 @@ def main() -> int:
         print(f"\n⚠  {total - high} words over the 4000 target band ({low}-{high}).")
     else:
         print(f"\n✓  Within the {low}-{high} target band.")
+
+    # Machine-readable line consumed by assemble.py.
+    print(f"TOTAL_WORDS={total}")
     return 0
 
 
