@@ -2,3 +2,4 @@ out/
 *.pdf.tmp
 .DS_Store
 report.html
+slides.html

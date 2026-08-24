@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>DevOps Delivery Strategy — Nimbus</title>
+<link rel="stylesheet" href="slides.css">
+</head>
+<body>
+
+<section class="slide title-slide">
+  <div class="kicker">Learnkey Institute · Malta Campus</div>
+  <h1>Design, Justify and Present a<br>DevOps Delivery Strategy</h1>
+  <div class="rule"></div>
+  <div class="meta">
+    <strong>Scenario B</strong> — The Growing SaaS Start-up Outgrowing Its Scripts<br>
+    Nimbus Ltd. · &ldquo;Nimbus Notes&rdquo; B2B SaaS<br>
+    Imran Chowdhury Neta · Introduction to DevOps: Principles and Practices
+  </div>
+  <div class="brand">github.com/imranneta5555/DevOps</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">The organisation</div>
+  <h2>Fifteen people, four hundred customers, two hand-built servers</h2>
+  <p class="sub">A company whose delivery process was designed for three people in one room.</p>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Two EC2 instances</strong> configured by hand over SSH and edited in place ever since<span class="why">Their real configuration exists only in the machine and in one engineer's memory</span></li>
+        <li><strong>Deployment is a person</strong> — Sam runs <code>deploy.sh</code> from a laptop<span class="why">Every release queues behind one calendar</span></li>
+        <li><strong>No automated tests, no pipeline</strong><span class="why">Quality is a manual spreadsheet re-executed each release</span></li>
+        <li><strong>Cloud bill climbing, nobody owns it</strong></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel warn">
+        <h3>Why now</h3>
+        <p>A funding round and a doubling of the engineering team are coming. Technical due diligence asks how often you ship and how fast you recover — and the honest answers are currently embarrassing.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 1</div><div class="slidenum">2</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 1 · Current state</div>
+  <h2>Seventeen days of lead time — two and a half of them working</h2>
+  <!-- FIGURE:fig1-value-stream -->
+  <div class="brand">The constraint is the process, not the headcount</div><div class="slidenum">3</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 1 · Baseline</div>
+  <h2>You cannot lead a change you cannot evidence</h2>
+  <p class="sub">Reconstructed from a quarter of Git history, deployment notes and incident messages.</p>
+  <table>
+    <thead><tr><th>Metric</th><th>Baseline</th><th>DORA band</th><th>6 months</th><th>12 months</th></tr></thead>
+    <tbody>
+      <tr><td>Deployment frequency</td><td class="num">2.1 / month</td><td>Low</td><td class="num">2 / week</td><td class="num good">Daily</td></tr>
+      <tr><td>Lead time for change</td><td class="num">17 days</td><td>Low</td><td class="num">3 days</td><td class="num good">&lt; 1 day</td></tr>
+      <tr><td>Change failure rate</td><td class="num">25%</td><td>Low</td><td class="num">15%</td><td class="num good">&lt; 10%</td></tr>
+      <tr><td>Mean time to restore</td><td class="num">4h 10m</td><td>Low</td><td class="num">1 hour</td><td class="num good">&lt; 30 min</td></tr>
+      <tr><td>Infrastructure cost per tenant</td><td class="num">€2.14</td><td>—</td><td class="num">€1.70</td><td class="num good">€1.40</td></tr>
+    </tbody>
+  </table>
+  <div class="panel" style="margin-top:20px;"><p><strong>Stage 0 of the roadmap is measurement, and nothing else.</strong> A start-up that cannot evidence improvement cannot defend the investment that produces it.</p></div>
+  <div class="brand">Part 1</div><div class="slidenum">4</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 1 · Diagnosis</div>
+  <h2>Waste, a knowledge silo, and where CALMS stops helping</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Waiting</strong> dominates — queues, not effort</li>
+        <li><strong>Three handoffs</strong> per change, each discarding context</li>
+        <li><strong>Partially done work</strong> in three-week branches</li>
+        <li><strong>Relearning</strong> in every outage — no runbooks</li>
+        <li><strong>Bus factor of one</strong> — the silo is knowledge, not departments</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel warn">
+        <h3>A critique of CALMS</h3>
+        <p>CALMS describes a destination, not a route. It supplies no sequence — so teams start with <em>Automation</em> because tooling is tangible, automating a process nobody has measured. It is also silent on cost and security, which is why FinOps and DevSecOps had to be bolted on.</p>
+      </div>
+      <div class="panel" style="margin-top:16px;">
+        <h3>So we invert it</h3>
+        <p>Measurement and Sharing first. Automation follows from them, not before.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 1</div><div class="slidenum">5</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 2 · Version control</div>
+  <h2>Trunk-based development on a protected trunk</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Branches live under two days</strong>, merged by pull request<span class="why">Batch size is the real lever: twelve small merges beat one large one</span></li>
+        <li><strong>Not GitFlow</strong> — release and hotfix branches earn their keep only when customers choose when to upgrade<span class="why">Nimbus runs one shared instance; GitFlow would formalise the disease</span></li>
+        <li><strong>Not direct-to-trunk either</strong><span class="why">Review is the cheapest knowledge transfer available to a bus-factor-of-one team</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel">
+        <h3>Traceability chain</h3>
+        <p>ticket → branch → commit → pull request → release tag → image digest → <code>/api/health</code> reports the running version.</p>
+        <p style="margin-top:10px;">Any environment traces back to the exact commit that produced it — without asking anyone. That chain is also the audit evidence.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 2</div><div class="slidenum">6</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 3 · Pipeline</div>
+  <h2>Build once, deploy many</h2>
+  <!-- FIGURE:fig2-pipeline -->
+  <div class="brand">One image per commit, promoted unchanged</div><div class="slidenum">7</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 3 · Quality</div>
+  <h2>Gates with thresholds, not opinions</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>~1,200 unit tests</strong> under 2 minutes</li>
+        <li><strong>~150 integration tests</strong> against a real database</li>
+        <li><strong>~10 end-to-end journeys</strong> only — post-deploy</li>
+        <li><strong>Coverage ratchet</strong>, not a fixed 80%<span class="why">A fixed number invites tests written to satisfy the number</span></li>
+        <li><strong>Ten-minute pipeline budget</strong><span class="why">A slow pipeline gets routed around, and a gate routed around is not a gate</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel warn">
+        <h3>The trap we are avoiding</h3>
+        <p>With no unit tests today, browser tests <em>feel</em> like faster coverage — the ice-cream cone. But they are slow, fragile and locate failures poorly, and a flaky suite teaches engineers to re-run failures instead of reading them.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 3</div><div class="slidenum">8</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 3 · Release</div>
+  <h2>Blue-green now, canary when it is earned</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Blue-green</strong>: deploy to idle, smoke test, shift traffic<span class="why">Rollback is a traffic shift in seconds, not a redeployment in hours</span></li>
+        <li><strong>Expand-and-contract migrations</strong><span class="why">Code reverts in seconds; a destructive migration never does — this is what makes rollback real</span></li>
+        <li><strong>Feature flags</strong> decouple deploy from release</li>
+        <li><strong>Rollback rehearsed monthly</strong><span class="why">An untested rollback is a hope, not a plan</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel warn">
+        <h3>Why not canary</h3>
+        <p>Canary needs weighted routing, per-cohort metrics and enough traffic for a fast statistical signal — at Nimbus's volume, a 1% canary takes days to say anything trustworthy.</p>
+        <p style="margin-top:10px;">More importantly, a canary is only as good as the observability judging it. Without that, it is simply a slower outage. <strong>Sequencing, not rejection.</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 3</div><div class="slidenum">9</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 4 · Infrastructure</div>
+  <h2>From pets to cattle</h2>
+  <!-- FIGURE:fig3-architecture -->
+  <div class="brand">Parity by construction — same modules, different variables</div><div class="slidenum">10</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 4 · Drift</div>
+  <h2>Detection alone does not stop drift</h2>
+  <table>
+    <thead><tr><th>Layer</th><th>Control</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Remove the cause</strong></td><td>No interactive SSH; break-glass is time-boxed and audited</td><td>Manual edits become impossible, not merely discouraged</td></tr>
+      <tr><td><strong>Detect</strong></td><td>Scheduled <code>terraform plan</code>, alerting on any diff</td><td>Unmanaged change surfaces within a day</td></tr>
+      <tr><td><strong>Correct</strong></td><td>The pipeline is the only path permitted to apply</td><td>Reality is continuously reconciled to the code</td></tr>
+      <tr><td><strong>Prevent</strong></td><td>Pinned digests and versions; policy as code on merge</td><td>Non-compliant infrastructure cannot enter the repo</td></tr>
+    </tbody>
+  </table>
+  <div class="panel" style="margin-top:20px;"><p><strong><code>terraform plan</code> in a pull request is a reviewable diff of production before it changes</strong> — a stronger control than any change-approval meeting, because it is precise and automatic.</p></div>
+  <div class="brand">Part 4</div><div class="slidenum">11</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 4 · Orchestration</div>
+  <h2>We are not adopting Kubernetes — yet</h2>
+  <div class="cols">
+    <div class="col">
+      <div class="panel warn">
+        <h3>The reasoning</h3>
+        <p>Kubernetes is not one tool but an operational surface: cluster upgrades, networking, ingress, RBAC, storage classes, a control plane to fund.</p>
+        <p style="margin-top:10px;">Running it competently needs one engineer with deep expertise — which <strong>recreates our defining problem, a bus factor of one</strong>, at a higher altitude and with worse failure modes.</p>
+        <p style="margin-top:10px;">A managed container runtime gives declarative services, health-based rolling deploys and autoscaling for a fraction of that surface.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="panel">
+        <h3>Triggers to revisit</h3>
+        <p>The decision is time-bound, not permanent. We reopen it when any of these becomes true:</p>
+      </div>
+      <ul style="margin-top:16px;">
+        <li>More than roughly <strong>ten services</strong></li>
+        <li>Ownership split across <strong>multiple teams</strong></li>
+        <li>Real need for <strong>traffic shaping</strong> — canary, service mesh</li>
+        <li>A <strong>dedicated platform engineer</strong> is hired</li>
+      </ul>
+    </div>
+  </div>
+  <div class="brand">Part 4</div><div class="slidenum">12</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 5 · Reliability</div>
+  <h2>The error budget settles the speed-versus-stability argument</h2>
+  <!-- FIGURE:fig4-error-budget -->
+  <div class="brand">A rule agreed in advance, not a debate won by seniority</div><div class="slidenum">13</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 5 · Security &amp; recovery</div>
+  <h2>Shift security left; rehearse recovery</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>OIDC federation</strong> — the pipeline holds no long-lived cloud credentials<span class="why">Pre-commit scanning stops secrets entering history; Git history is permanent</span></li>
+        <li><strong>SBOM, signed images, admission policy</strong></li>
+        <li><strong>Policy as code</strong> turns compliance findings into build failures</li>
+        <li><strong>Evidence as a by-product</strong><span class="why">Approvals, logs, signed artefacts and applied plans answer the questionnaire</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <ul>
+        <li><strong>Timeouts, backoff with jitter, circuit breakers, bulkheads</strong><span class="why">Graceful degradation beats an error page</span></li>
+        <li><strong>RTO 1 hour · RPO 15 minutes</strong>, restores tested quarterly<span class="why">A backup never restored is an assumption, not a control</span></li>
+        <li><strong>Multi-AZ yes, multi-region no</strong><span class="why">Multiplying cost for a failure mode rarer than the ones actually hurting us</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="brand">Part 5</div><div class="slidenum">14</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 6 · Cost</div>
+  <h2>Cost per tenant is the number that matters</h2>
+  <div class="metrics">
+    <div class="metric"><div class="v">€2.14</div><div class="l">Infrastructure cost per tenant today</div></div>
+    <div class="metric"><div class="v">€1.40</div><div class="l">Twelve-month target</div></div>
+    <div class="metric"><div class="v">~65%</div><div class="l">Typical saving from shutting non-production out of hours</div></div>
+  </div>
+  <div class="cols" style="margin-top:26px;">
+    <div class="col">
+      <ul>
+        <li><strong>Inform</strong> — mandatory tags enforced by policy; dashboards visible to engineers, not only finance</li>
+        <li><strong>Optimise</strong> — right-sizing, autoscaling, commitments for the baseline, spot for CI runners</li>
+        <li><strong>Operate</strong> — cost delta shown in the pull request, before merge</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel warn">
+        <h3>Honest trade-off</h3>
+        <p>At our size, engineering time costs more than infrastructure. Three weeks of effort to save a few hundred euro a month is a bad trade. And the real defect in the scenario is not a missing tool — it is <strong>a missing owner</strong>.</p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Part 6</div><div class="slidenum">15</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 6 · Leading the change</div>
+  <h2>The technical plan is the straightforward half</h2>
+  <div class="cols">
+    <div class="col">
+      <div class="panel warn">
+        <h3>Sam is the most important stakeholder</h3>
+        <p>The single expert can veto this programme, and their standing derives from being indispensable. A plan that quietly removes that status will be resisted — whatever its engineering merits.</p>
+        <p style="margin-top:10px;"><strong>Frame it as a promotion:</strong> Sam owns the platform, with the pipeline and infrastructure code as their product. Then measure the bus factor — engineers who can independently deploy and recover production. It starts at one.</p>
+      </div>
+    </div>
+    <div class="col">
+      <ul>
+        <li><strong>Start with pain the team already feels</strong><span class="why">Opening with policy enforcement reads as bureaucracy</span></li>
+        <li><strong>Speak each audience's language</strong><span class="why">Board: delivery risk and unit cost. Team: no weekend releases.</span></li>
+        <li><strong>A fifth of each iteration for debt</strong>, with its monthly cost stated</li>
+        <li><strong>&ldquo;You build it, you run it&rdquo;</strong> — only with authority and time, otherwise it is just extra pager duty</li>
+      </ul>
+    </div>
+  </div>
+  <div class="brand">Part 6</div><div class="slidenum">16</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Part 6 · Roadmap</div>
+  <h2>Twelve months, five stages, deliberate order</h2>
+  <table>
+    <thead><tr><th>Stage</th><th>Focus</th><th>Exit condition</th></tr></thead>
+    <tbody>
+      <tr><td><strong>0 · Weeks 1–2</strong></td><td>Measure — instrument the metrics, change nothing else</td><td>A baseline the team agrees with</td></tr>
+      <tr><td><strong>1 · Weeks 3–8</strong></td><td>Make it repeatable — trunk, CI, containers, staging in Terraform</td><td>Any engineer can produce a deployable artefact</td></tr>
+      <tr><td><strong>2 · Months 3–5</strong></td><td>Make it safe — blue-green, telemetry, SLOs, on-call</td><td>Weekly releases without a release weekend</td></tr>
+      <tr><td><strong>3 · Months 6–9</strong></td><td>Make it secure and economical — gates, OIDC, FinOps, tested restores</td><td>Questionnaire answered from evidence</td></tr>
+      <tr><td><strong>4 · Months 9–12</strong></td><td>Make it self-service — previews, progressive delivery, game days</td><td>Daily deployment as routine</td></tr>
+    </tbody>
+  </table>
+  <div class="panel" style="margin-top:18px;"><p>Measurement precedes change because unevidenced improvement cannot be funded. Repeatability precedes safety because <strong>automated rollback is meaningless without a reproducible artefact to roll back to</strong>.</p></div>
+  <div class="brand">Part 6</div><div class="slidenum">17</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Evidence</div>
+  <h2>The artefacts are real and running</h2>
+  <div class="cols">
+    <div class="col">
+      <ul>
+        <li><strong>Git history</strong> — four feature branches merged into a protected trunk, conventional commits, annotated tag <code>v1.0.0</code></li>
+        <li><strong>CI workflow</strong> — lint, unit tests and production build on every push, then a container image build</li>
+        <li><strong>Dockerfile</strong> — three stages, lockfile install, minimal runtime, unprivileged user</li>
+        <li><strong>Compose</strong> — health check polling <code>/api/health</code></li>
+        <li><strong>Terraform</strong> — provider pinning, environment variable, mandatory ownership and cost-centre tags</li>
+      </ul>
+    </div>
+    <div class="col">
+      <div class="panel">
+        <h3>Verify it yourself</h3>
+        <p style="font-family:Menlo,monospace;font-size:14px;line-height:1.7;">
+          git log --graph --oneline --all<br>
+          git tag -n1<br>
+          npm ci &amp;&amp; npm test &amp;&amp; npm run build<br>
+          docker compose up --build<br>
+          curl localhost:3000/api/health
+        </p>
+        <p style="margin-top:12px;"><strong>github.com/imranneta5555/DevOps</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="brand">Deliverable 2</div><div class="slidenum">18</div>
+</section>
+
+<section class="slide">
+  <div class="kicker">Closing</div>
+  <h2>Speed and stability are not opposites</h2>
+  <p class="sub">The assumption this strategy is designed to disprove.</p>
+  <div class="panel" style="margin-bottom:24px;">
+    <p style="font-size:20px;">The practices that make delivery fast — small batches, automated verification, reproducible environments, fast feedback — are the same ones that make it safe, because <strong>a small, tested, reversible change is both quicker to ship and easier to diagnose when it fails.</strong></p>
+  </div>
+  <div class="metrics">
+    <div class="metric"><div class="v">17 d → &lt; 1 d</div><div class="l">Lead time</div></div>
+    <div class="metric"><div class="v">2/mo → daily</div><div class="l">Deployment frequency</div></div>
+    <div class="metric"><div class="v">25% → &lt; 10%</div><div class="l">Change failure rate</div></div>
+    <div class="metric"><div class="v">4h → &lt; 30m</div><div class="l">Time to restore</div></div>
+  </div>
+  <div class="brand">Questions</div><div class="slidenum">19</div>
+</section>
+
+</body>
+</html>

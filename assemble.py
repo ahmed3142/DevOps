@@ -61,6 +61,14 @@ def main() -> int:
 
     print("\n".join(l for l in result.stdout.splitlines() if not l.startswith("TOTAL_WORDS=")))
     print(f"assembled: report.html ({total} assessed words)")
+
+    # The presentation deck reuses the same figure fragments.
+    slides_src = ROOT / "slides-src.html"
+    if slides_src.exists():
+        slides = inline_figures(slides_src.read_text(encoding="utf-8"))
+        (ROOT / "slides.html").write_text(slides, encoding="utf-8")
+        print("assembled: slides.html")
+
     return 0
 
 
