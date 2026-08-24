@@ -1,0 +1,52 @@
+<section class="appendix no-count">
+  <div class="partlabel">Appendix A</div>
+  <h2>Supporting Artefacts</h2>
+  <p>The artefacts evidencing the practices described in this report are held in the accompanying repository:</p>
+  <p style="font-size:11pt;"><strong>github.com/imranneta5555/DevOps</strong></p>
+
+  <h3>A.1 Repository contents</h3>
+  <table class="data">
+    <thead><tr><th>Artefact</th><th>Path</th><th>Demonstrates</th></tr></thead>
+    <tbody>
+      <tr><td>Git history</td><td><code>git log --graph --oneline</code></td><td>Short-lived feature branches merged into a protected trunk; conventional commit messages; four merge commits; annotated release tag <code>v1.0.0</code> (Part 2)</td></tr>
+      <tr><td>CI workflow</td><td><code>.github/workflows/ci.yml</code></td><td>Lint, unit tests and production build on every push and pull request, followed by a dependent container image build (Part 3)</td></tr>
+      <tr><td>Container build</td><td><code>Dockerfile</code>, <code>.dockerignore</code></td><td>Three-stage build, lockfile-driven dependency install, minimal runtime image, unprivileged user (Part 4)</td></tr>
+      <tr><td>Runtime definition</td><td><code>compose.yml</code></td><td>Service definition with port mapping, restart policy and a health check polling <code>/api/health</code> (Parts 4–5)</td></tr>
+      <tr><td>Infrastructure as code</td><td><code>infra/main.tf</code></td><td>Illustrative Terraform: provider pinning, environment variable, and mandatory ownership and cost-centre tags (Parts 4 and 6)</td></tr>
+      <tr><td>Version traceability</td><td><code>app/api/health/route.ts</code></td><td>The running service reports its own version, closing the traceability chain described in Part 2</td></tr>
+      <tr><td>Test suite</td><td><code>tests/</code></td><td>Unit tests for the store and both API routes, including validation failure cases (Part 3)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A.2 Verifying the artefacts</h3>
+  <pre>git clone https://github.com/imranneta5555/DevOps.git &amp;&amp; cd DevOps
+git log --graph --oneline --all     # branches, merges and commit history
+git tag -n1                         # annotated release tag
+
+npm ci &amp;&amp; npm run lint &amp;&amp; npm test &amp;&amp; npm run build
+docker compose up --build           # container becomes "healthy" via /api/health
+
+curl localhost:3000/api/health
+curl -X POST localhost:3000/api/notes -H 'Content-Type: application/json' -d '{"text":"hello"}'</pre>
+  <p style="font-size:9pt;color:#55606e;font-style:italic;">The GitHub Actions tab records the pipeline runs for <code>main</code> and for the <code>v1.0.0</code> tag. The application deliberately remains trivial: as the brief notes, the assessment concerns the delivery artefacts and their justification rather than the complexity of the product.</p>
+
+  <div class="partlabel" style="margin-top:22pt;">Appendix B</div>
+  <h2>References</h2>
+  <ol class="refs">
+    <li>Forsgren, N., Humble, J. and Kim, G. (2018) <em>Accelerate: The Science of Lean Software and DevOps</em>. Portland: IT Revolution Press.</li>
+    <li>Kim, G., Debois, P., Willis, J. and Humble, J. (2016) <em>The DevOps Handbook</em>. Portland: IT Revolution Press.</li>
+    <li>Humble, J. and Farley, D. (2010) <em>Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation</em>. Boston: Addison-Wesley.</li>
+    <li>Beyer, B., Jones, C., Petoff, J. and Murphy, N. R. (eds.) (2016) <em>Site Reliability Engineering: How Google Runs Production Systems</em>. Sebastopol: O'Reilly Media.</li>
+    <li>Beyer, B., Murphy, N. R., Rensin, D., Kawahara, K. and Thorne, S. (eds.) (2018) <em>The Site Reliability Workbook</em>. Sebastopol: O'Reilly Media.</li>
+    <li>Google Cloud (2024) <em>DORA — Accelerate State of DevOps Report</em>. Available at: https://dora.dev (Accessed: 25 August 2026).</li>
+    <li>Fowler, M. (2020) <em>Patterns for Managing Source Code Branches</em>. Available at: https://martinfowler.com/articles/branching-patterns.html (Accessed: 25 August 2026).</li>
+    <li>Hodgson, P. (2017) <em>Feature Toggles (aka Feature Flags)</em>. Available at: https://martinfowler.com/articles/feature-toggles.html (Accessed: 25 August 2026).</li>
+    <li>Morris, K. (2020) <em>Infrastructure as Code: Dynamic Systems for the Cloud Age</em>. 2nd edn. Sebastopol: O'Reilly Media.</li>
+    <li>Nygard, M. T. (2018) <em>Release It! Design and Deploy Production-Ready Software</em>. 2nd edn. Raleigh: Pragmatic Bookshelf.</li>
+    <li>Storment, J. R. and Fuller, M. (2023) <em>Cloud FinOps: Collaborative, Real-Time Cloud Financial Management</em>. 2nd edn. Sebastopol: O'Reilly Media.</li>
+    <li>FinOps Foundation (2024) <em>FinOps Framework: Inform, Optimize, Operate</em>. Available at: https://www.finops.org/framework (Accessed: 25 August 2026).</li>
+    <li>OpenTelemetry Authors (2024) <em>OpenTelemetry Documentation</em>. Available at: https://opentelemetry.io/docs (Accessed: 25 August 2026).</li>
+    <li>Cockcroft, A. (2014) <em>State of the Art in Microservices</em> — on immutable infrastructure and 'cattle not pets'. Available at: https://www.slideshare.net/adriancockcroft (Accessed: 25 August 2026).</li>
+    <li>Conway, M. E. (1968) 'How do committees invent?', <em>Datamation</em>, 14(5), pp. 28–31.</li>
+  </ol>
+</section>
