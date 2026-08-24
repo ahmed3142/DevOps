@@ -17,7 +17,7 @@
   <p>Servers are never modified in place. A change produces a new image and a new instance, and the old one is destroyed. Rollback becomes redeployment of the previous known-good artefact, and disaster recovery becomes a rebuild from code rather than the restoration of a machine nobody can reproduce. Drift is then defended in four layers, because detection alone is insufficient.</p>
 
   <table class="data">
-    <caption>Table 3 — Layered defence against configuration drift</caption>
+    <caption>Table 4 — Layered defence against configuration drift</caption>
     <thead><tr><th>Layer</th><th>Control</th><th>Effect</th></tr></thead>
     <tbody>
       <tr><td>Remove the cause</td><td>No interactive SSH to production; break-glass access time-boxed, brokered and audited</td><td>Manual edits become impossible rather than discouraged</td></tr>
@@ -30,7 +30,7 @@
   <!-- FIGURE:fig3-architecture -->
 
   <h3>4.5 Containers as the unit of deployment</h3>
-  <p>The application is packaged as a container image, and that image is the deployable unit everywhere: on a laptop through Compose, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build — dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base, running as an unprivileged user. That pays three ways at once: the runtime image is small and so fast to pull; it excludes build tooling and source, reducing attack surface; and because the build is driven by a lockfile and a pinned base digest, the same inputs produce the same image. Reproducibility is what makes an artefact trustworthy enough to promote without retesting.</p>
+  <p>The application is packaged as a container image, and that image is the deployable unit everywhere: on a laptop through Compose, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build — dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base, running as an unprivileged user. That pays three ways at once: the runtime image is small and so fast to pull; it excludes build tooling and source, reducing attack surface; and because the build is driven by a lockfile and a pinned base digest, the same inputs produce the same image — the reproducibility that makes an artefact trustworthy enough to promote without retesting.</p>
 
   <h3>4.6 Orchestration: the case against Kubernetes today</h3>
   <p>Kubernetes would give Nimbus declarative rollouts, self-healing, autoscaling and service discovery — and it is where the industry's attention sits. It is still the wrong choice for this team this year.</p>
@@ -39,5 +39,5 @@
     <p>Kubernetes is not one tool but an operational surface: cluster upgrades, networking, ingress, RBAC, storage classes and a control plane to fund. Running it competently requires at least one engineer with deep expertise — which would recreate Nimbus's defining problem, a bus factor of one, at a higher level of abstraction and with worse failure modes. A managed container service delivers declarative service definitions, health-based rolling deployments and autoscaling for a fraction of that surface, using the same image the pipeline already builds.</p>
     <p>The decision is time-bound rather than permanent, with explicit triggers for revisiting it: more than roughly ten services, ownership split across multiple teams, a genuine need for traffic shaping such as canary or a service mesh, or the hire of a dedicated platform engineer. Naming the triggers turns a preference into an architecture decision record a successor can evaluate.</p>
   </div>
-  <p>Environments follow the artefact: Compose locally, ephemeral containers in CI, staging and production from the same Terraform modules, with per-pull-request preview environments added once the foundations are stable.</p>
+  <p>Environments follow the artefact: Compose locally, ephemeral containers in CI, staging and production from the same Terraform modules, with preview environments added once the foundations are stable.</p>
 </section>

@@ -5,14 +5,9 @@
 
   <h3>1.1 The organisation and how work flows</h3>
   <p>Nimbus Ltd. is a fifteen-person start-up whose product, <em>Nimbus Notes</em>, is a subscription knowledge base used by around four hundred small-business teams. Seven engineers build it, on two Amazon EC2 instances configured by hand over SSH at founding and edited in place ever since.</p>
-  <p>A change is developed on a branch that lives two to three weeks, reviewed informally if at all, checked against a manual regression spreadsheet, and reaches production only when Sam — the founding engineer — runs <code>deploy.sh</code> from a laptop. Figure 1 maps that value stream: seventeen days from commitment to production, of which roughly two and a half involve anyone touching the change — a flow efficiency of about fifteen per cent.</p>
+  <p>A change is developed on a branch that lives two to three weeks, reviewed informally if at all, checked against a manual regression spreadsheet, and reaches production only when Sam — the founding engineer — runs <code>deploy.sh</code> from a laptop. Figure 1 maps that value stream: seventeen days from commitment to production, of which roughly two and a half involve anyone touching the change — a flow efficiency of about fifteen per cent. Because the queueing dominates, hiring more developers would lengthen the queues rather than shorten them, which is what justifies investing in delivery infrastructure before headcount.</p>
 
   <!-- FIGURE:fig1-value-stream -->
-
-  <div class="callout">
-    <span class="title">Why the framing matters</span>
-    <p>If eighty-five per cent of lead time is queueing rather than working, hiring more developers will lengthen the queues rather than shorten them. The constraint is the process, not the capacity — which is what justifies investing in delivery infrastructure before headcount.</p>
-  </div>
 
   <h3>1.2 Waste, handoffs and silos</h3>
   <p>Reading that stream through the seven wastes of Lean turns complaints into a diagnosis. <strong>Partially done work</strong> accumulates in branches unmerged for weeks. <strong>Handoffs</strong> occur three times per change — developer, tester, deployer — each discarding context later rebuilt by conversation. <strong>Waiting</strong> is the largest category, because every release queues behind one person's calendar. <strong>Defects</strong> escape at one corrective deploy per four releases. <strong>Task switching</strong> costs twice over, since the engineer interrupted by deployments is the one whose work then stalls. <strong>Relearning</strong> happens in every outage, as production knowledge is re-derived under pressure without runbooks, and <strong>over-processing</strong> appears as a checklist re-executed identically each release.</p>
@@ -37,5 +32,5 @@
     </tbody>
   </table>
 
-  <p>These figures convert the argument from preference into evidence, and they carry commercial weight: technical due diligence asks how often a company ships and how quickly it recovers. A quarter of releases failing is not an engineering embarrassment but a churn driver.</p>
+  <p>These figures convert the argument from preference into evidence, and they carry commercial weight: technical due diligence asks how often a company ships and how quickly it recovers. A quarter of releases failing is not an engineering embarrassment but a churn driver. The bands themselves come from DORA's multi-year survey of tens of thousands of practitioners, which found elite performers deploying on demand while recovering in under an hour — the pattern Amazon and Netflix made visible when they moved from quarterly releases to thousands of deployments a day without a corresponding rise in failure.</p>
 </section>

@@ -20,7 +20,7 @@
       <tr><td>End-to-end</td><td>Critical journeys: sign-up, note CRUD, sharing, billing</td><td class="num">~10</td><td class="num">&lt; 6 min</td><td>Post-deploy to staging</td></tr>
     </tbody>
   </table>
-  <p>Nimbus will be tempted into the inverted pyramid — the "ice-cream cone" — because it has no unit tests and browser tests appear to cover more ground each. But end-to-end tests are slow, fragile and poor at locating failures: a red browser test says checkout is broken, a red unit test says which function returns the wrong value. A suite dominated by them becomes flaky, and a flaky suite is worse than none, because it teaches engineers to re-run failures rather than read them.</p>
+  <p>Nimbus will be tempted into the inverted pyramid — the "ice-cream cone" — because it has no unit tests and browser tests appear to cover more ground each. But end-to-end tests are slow, fragile and poor at locating failures: a red browser test says checkout is broken, a red unit test says which function returns the wrong value. A suite dominated by them becomes flaky, and a flaky suite teaches engineers to re-run failures rather than read them.</p>
 
   <h3>3.3 Quality gates</h3>
   <p>Each gate has a defined threshold and consequence, so quality is enforced by the pipeline rather than negotiated in a meeting.</p>
@@ -31,7 +31,22 @@
     <li><strong>Pipeline duration</strong> — a hard ten-minute budget from push to feedback; exceeding it is logged as a platform defect, because a slow pipeline gets routed around, and a gate that is routed around is not a gate.</li>
   </ul>
 
-  <h3>3.4 Release strategy and rollback</h3>
+  <h3>3.4 Choosing what to automate first</h3>
+  <p>Automation competes for the same engineering hours as features, so candidates are scored rather than chosen by enthusiasm: annual hours returned, weighed against build effort and the error rate the manual version carries.</p>
+  <table class="data">
+    <caption>Table 3 — Automation return on investment, first year</caption>
+    <thead><tr><th>Candidate</th><th>Frequency</th><th>Manual cost</th><th>Build effort</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>Test and build on every push</td><td class="num">~40 / week</td><td class="num">~90 h/yr + escaped defects</td><td class="num">3 days</td><td>Do first</td></tr>
+      <tr><td>Environment provisioning in code</td><td class="num">~1 / month</td><td class="num">~60 h/yr + drift</td><td class="num">15 days</td><td>Do — drift is the real return</td></tr>
+      <tr><td>Deployment and rollback</td><td class="num">~2 / month</td><td class="num">~50 h/yr + outage risk</td><td class="num">8 days</td><td>Do</td></tr>
+      <tr><td>Non-production shutdown</td><td class="num">nightly</td><td class="num">€0 time, ~€6k/yr spend</td><td class="num">1 day</td><td>Do — pays back in weeks</td></tr>
+      <tr><td>Fully automated production approval</td><td class="num">~2 / month</td><td class="num">~4 h/yr</td><td class="num">6 days</td><td>Defer until failure rate falls</td></tr>
+    </tbody>
+  </table>
+  <p>The table also explains a refusal: automating the production approval gate saves almost nothing while the change-failure rate is twenty-five per cent, and it becomes worth removing only once the earlier automation has made releases boring. Two candidates are staged for later, once enough telemetry exists to drive them — machine-assisted test selection, running only the tests a change can plausibly break, and anomaly detection over metrics and logs, which is how a cloud-native estate with more signals than humans keeps alert volume tractable. Both are data-hungry, and applying them to a system with no baseline would automate guesswork.</p>
+
+  <h3>3.5 Release strategy and rollback</h3>
   <p>Production releases use <strong>blue-green deployment</strong>. Two identical environments sit behind a load balancer; the new version is deployed to the idle one, smoke-tested against real infrastructure with no customer traffic, then made live by shifting the balancer. The previous environment stays warm for thirty minutes, so rollback is a traffic shift measured in seconds rather than a redeployment measured in hours. The cost is roughly double compute during the window — a few euro for a stateless tier, far cheaper than an hour of outage.</p>
 
   <div class="decision">
@@ -40,5 +55,5 @@
   </div>
 
   <p>Blue-green protects the application tier but not the database, which leads to the practice that actually makes rollback possible. <strong>Expand-and-contract migrations</strong> split schema changes across releases: first an additive change both old and new code tolerate, then the code that uses it, then a backfill, and only in a later release the removal of the old column. Without this discipline every rollback plan is fiction, because code reverts in seconds and a destructive migration cannot be reverted at all.</p>
-  <p><strong>Feature flags</strong> decouple deployment from release, so incomplete work ships while remaining invisible to customers — permitting small batches without exposing half-finished features, and providing a second, instantaneous rollback requiring no deployment. Rollback itself is rehearsed monthly in staging and the runbook corrected wherever it proved wrong: an untested rollback is a hope rather than a plan.</p>
+  <p><strong>Feature flags</strong> decouple deployment from release, so incomplete work ships while invisible to customers — permitting small batches and providing a second, instantaneous rollback needing no deployment. Rollback itself is rehearsed monthly in staging: an untested rollback is a hope rather than a plan.</p>
 </section>
