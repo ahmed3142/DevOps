@@ -12,6 +12,10 @@ from html.parser import HTMLParser
 
 SKIP_TAGS = {"figure", "pre", "code", "svg", "script", "style", "head"}
 
+# Some institutions also exclude tabulated display material alongside figures;
+# pass --exclude-tables to report that convention.
+TABLE_TAG = "table"
+
 # Elements that never have a closing tag and so must not affect nesting depth.
 VOID_TAGS = {
     "area", "base", "br", "col", "embed", "hr", "img", "input",
@@ -22,8 +26,9 @@ WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-/€%\.]*")
 
 
 class Counter(HTMLParser):
-    def __init__(self) -> None:
+    def __init__(self, exclude_tables: bool = False) -> None:
         super().__init__(convert_charrefs=True)
+        self.skip_tags = SKIP_TAGS | ({TABLE_TAG} if exclude_tables else set())
         self.stack: list[tuple[str, bool]] = []   # (tag, is_skipped)
         self.section: str | None = None
         self.words: dict[str, int] = {}
@@ -37,7 +42,7 @@ class Counter(HTMLParser):
             return
         attrs = dict(attrs)
         classes = attrs.get("class", "").split()
-        skipped = tag in SKIP_TAGS or "no-count" in classes
+        skipped = tag in self.skip_tags or "no-count" in classes
         if not self.skipping and tag == "section" and "part" in classes:
             self.section = attrs.get("data-part", "unnamed")
             self.words.setdefault(self.section, 0)
@@ -59,8 +64,10 @@ class Counter(HTMLParser):
 
 
 def main() -> int:
-    path = sys.argv[1] if len(sys.argv) > 1 else "report.html"
-    parser = Counter()
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    exclude_tables = "--exclude-tables" in sys.argv
+    path = args[0] if args else "report.html"
+    parser = Counter(exclude_tables=exclude_tables)
     with open(path, encoding="utf-8") as fh:
         parser.feed(fh.read())
 
@@ -73,7 +80,9 @@ def main() -> int:
         target = f"{targets[key]}" if key else "—"
         print(f"{name:<50}{count:>7}{target:>8}")
     print("-" * 65)
-    print(f"{'TOTAL (excl. diagrams, code, appendices)':<50}{total:>7}{4000:>8}")
+    label = "TOTAL (excl. diagrams, code, tables, appendices)" if exclude_tables \
+        else "TOTAL (excl. diagrams, code, appendices)"
+    print(f"{label:<50}{total:>7}{4000:>8}")
 
     low, high = 3900, 4100
     if total < low:
