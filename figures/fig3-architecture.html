@@ -1,0 +1,102 @@
+<figure>
+<svg viewBox="0 0 660 336" width="100%" role="img" aria-label="Target environment and infrastructure architecture with separate cloud accounts provisioned from Terraform">
+  <defs>
+    <marker id="ar-arrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L6,4 L0,7 z" fill="#55606e"/>
+    </marker>
+  </defs>
+  <style>
+    .ar-zone  { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#8a94a3; letter-spacing:.08em; }
+    .ar-acct  { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+    .ar-box   { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+    .ar-sub   { font: 7px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#55606e; }
+    .ar-white { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#ffffff; }
+    .ar-edge  { font: italic 7px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#55606e; }
+  </style>
+
+  <!-- control plane -->
+  <text class="ar-zone" x="11" y="13">CONTROL PLANE — EVERYTHING BELOW IS PRODUCED FROM CODE</text>
+  <rect x="11" y="20" width="638" height="52" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+  <rect x="22" y="30" width="118" height="32" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="ar-box" x="81" y="44" text-anchor="middle">Git repository</text>
+  <text class="ar-sub" x="81" y="55" text-anchor="middle">app + Terraform + policy</text>
+
+  <rect x="156" y="30" width="118" height="32" rx="3" fill="#14315c"/>
+  <text class="ar-white" x="215" y="44" text-anchor="middle">CI/CD pipeline</text>
+  <text class="ar-white" x="215" y="55" text-anchor="middle" opacity="0.8">test · build · plan · apply</text>
+
+  <rect x="290" y="30" width="112" height="32" rx="3" fill="#b8442c"/>
+  <text class="ar-white" x="346" y="44" text-anchor="middle">Image registry</text>
+  <text class="ar-white" x="346" y="55" text-anchor="middle" opacity="0.85">signed, digest-pinned</text>
+
+  <rect x="418" y="30" width="106" height="32" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="ar-box" x="471" y="44" text-anchor="middle">Terraform state</text>
+  <text class="ar-sub" x="471" y="55" text-anchor="middle">remote, locked, encrypted</text>
+
+  <rect x="540" y="30" width="98" height="32" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="ar-box" x="589" y="44" text-anchor="middle">Secrets manager</text>
+  <text class="ar-sub" x="589" y="55" text-anchor="middle">OIDC, no static keys</text>
+
+  <g stroke="#55606e" stroke-width="0.8" marker-end="url(#ar-arrow)">
+    <line x1="140" y1="46" x2="154" y2="46"/>
+    <line x1="274" y1="46" x2="288" y2="46"/>
+  </g>
+
+  <!-- provisioning arrows -->
+  <path d="M215,62 L215,88" stroke="#55606e" stroke-width="0.9" fill="none" marker-end="url(#ar-arrow)"/>
+  <path d="M215,78 L470,78 L470,88" stroke="#55606e" stroke-width="0.9" fill="none" marker-end="url(#ar-arrow)"/>
+  <text class="ar-edge" x="240" y="75">one module set, different variables — parity by construction</text>
+
+  <!-- staging account -->
+  <text class="ar-zone" x="11" y="102">AWS ACCOUNT · STAGING</text>
+  <rect x="11" y="108" width="300" height="92" rx="4" fill="#f7f9fb" stroke="#c3ccd8" stroke-width="0.8" stroke-dasharray="3 2"/>
+  <rect x="24" y="122" width="128" height="30" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="88" y="135" text-anchor="middle">Load balancer</text>
+  <text class="ar-sub" x="88" y="146" text-anchor="middle">single target group</text>
+  <rect x="166" y="122" width="132" height="30" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="232" y="135" text-anchor="middle">Container service</text>
+  <text class="ar-sub" x="232" y="146" text-anchor="middle">1 task · same image</text>
+  <rect x="24" y="160" width="128" height="28" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="88" y="178" text-anchor="middle">Database (single-AZ)</text>
+  <rect x="166" y="160" width="132" height="28" rx="3" fill="#eef1f5" stroke="#c3ccd8" stroke-width="0.8"/>
+  <text class="ar-sub" x="232" y="172" text-anchor="middle">auto-shutdown outside</text>
+  <text class="ar-sub" x="232" y="182" text-anchor="middle">working hours — FinOps</text>
+
+  <!-- production account -->
+  <text class="ar-zone" x="349" y="102">AWS ACCOUNT · PRODUCTION</text>
+  <rect x="349" y="108" width="300" height="92" rx="4" fill="#f7f9fb" stroke="#14315c" stroke-width="1"/>
+  <rect x="362" y="122" width="128" height="30" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="426" y="135" text-anchor="middle">Load balancer</text>
+  <text class="ar-sub" x="426" y="146" text-anchor="middle">weighted blue / green</text>
+  <rect x="504" y="122" width="64" height="30" rx="3" fill="#dfe5ec" stroke="#c3ccd8" stroke-width="0.7"/>
+  <text class="ar-sub" x="536" y="141" text-anchor="middle">blue (live)</text>
+  <rect x="574" y="122" width="64" height="30" rx="3" fill="#14315c"/>
+  <text class="ar-white" x="606" y="141" text-anchor="middle">green</text>
+  <rect x="362" y="160" width="128" height="28" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="426" y="172" text-anchor="middle">Database (multi-AZ)</text>
+  <text class="ar-sub" x="426" y="182" text-anchor="middle">PITR · RPO 15 min</text>
+  <rect x="504" y="160" width="134" height="28" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="571" y="172" text-anchor="middle">Encrypted backups</text>
+  <text class="ar-sub" x="571" y="182" text-anchor="middle">restore tested quarterly</text>
+
+  <!-- observability -->
+  <text class="ar-zone" x="11" y="222">OBSERVABILITY &amp; GOVERNANCE — SHARED ACCOUNT</text>
+  <rect x="11" y="228" width="638" height="46" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+  <rect x="24" y="238" width="146" height="26" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="97" y="255" text-anchor="middle">Metrics · SLO dashboards</text>
+  <rect x="182" y="238" width="146" height="26" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="255" y="255" text-anchor="middle">Structured logs</text>
+  <rect x="340" y="238" width="146" height="26" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="413" y="255" text-anchor="middle">Traces (OpenTelemetry)</text>
+  <rect x="498" y="238" width="140" height="26" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.8"/>
+  <text class="ar-box" x="568" y="255" text-anchor="middle">Cost &amp; audit records</text>
+
+  <path d="M290,200 L290,226" stroke="#55606e" stroke-width="0.8" fill="none" marker-end="url(#ar-arrow)"/>
+  <path d="M499,200 L499,226" stroke="#55606e" stroke-width="0.8" fill="none" marker-end="url(#ar-arrow)"/>
+
+  <line x1="11" y1="290" x2="649" y2="290" stroke="#dfe5ec" stroke-width="0.8"/>
+  <text class="ar-sub" x="11" y="304">No interactive SSH into either account: change reaches production only through the pipeline, and a scheduled plan alerts on any drift.</text>
+  <text class="ar-sub" x="11" y="318">Accounts are separated so a mistake cannot cross environments and so the invoice arrives already attributed.</text>
+</svg>
+<figcaption><b>Figure 3</b> — Target environment architecture. Staging and production are generated from the same Terraform modules with different variables, so parity is structural; the pipeline is the only path by which either account changes.</figcaption>
+</figure>

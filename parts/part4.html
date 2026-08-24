@@ -27,6 +27,8 @@
     </tbody>
   </table>
 
+  <!-- FIGURE:fig3-architecture -->
+
   <h3>4.5 Containers as the unit of deployment</h3>
   <p>The application is packaged as a container image, and that image is the deployable unit everywhere: on a laptop through Compose, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build — dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base, running as an unprivileged user. That pays three ways at once: the runtime image is small and so fast to pull; it excludes build tooling and source, reducing attack surface; and because the build is driven by a lockfile and a pinned base digest, the same inputs produce the same image. Reproducibility is what makes an artefact trustworthy enough to promote without retesting.</p>
 
