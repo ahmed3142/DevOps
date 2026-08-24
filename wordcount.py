@@ -12,58 +12,68 @@ from html.parser import HTMLParser
 
 SKIP_TAGS = {"figure", "pre", "code", "svg", "script", "style", "head"}
 
+# Elements that never have a closing tag and so must not affect nesting depth.
+VOID_TAGS = {
+    "area", "base", "br", "col", "embed", "hr", "img", "input",
+    "link", "meta", "param", "source", "track", "wbr",
+}
+
+WORD_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9'’\-/€%\.]*")
+
 
 class Counter(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
-        self.depth = 0          # nesting depth inside a skipped element
-        self.stack: list[str] = []
-        self.section = None     # current part heading, for the breakdown
+        self.stack: list[tuple[str, bool]] = []   # (tag, is_skipped)
+        self.section: str | None = None
         self.words: dict[str, int] = {}
-        self._pending_heading = False
+
+    @property
+    def skipping(self) -> bool:
+        return any(skipped for _, skipped in self.stack)
 
     def handle_starttag(self, tag, attrs):
+        if tag in VOID_TAGS:
+            return
         attrs = dict(attrs)
         classes = attrs.get("class", "").split()
-        if self.depth or tag in SKIP_TAGS or "no-count" in classes:
-            self.depth += 1
-            self.stack.append(tag)
-            return
-        if tag == "section" and "part" in classes:
+        skipped = tag in SKIP_TAGS or "no-count" in classes
+        if not self.skipping and tag == "section" and "part" in classes:
             self.section = attrs.get("data-part", "unnamed")
             self.words.setdefault(self.section, 0)
-        if tag == "h2":
-            self._pending_heading = True
-        self.stack.append(tag)
+        self.stack.append((tag, skipped))
 
     def handle_endtag(self, tag):
-        if self.stack:
-            self.stack.pop()
-        if self.depth:
-            self.depth -= 1
-        if tag == "h2":
-            self._pending_heading = False
+        if tag in VOID_TAGS:
+            return
+        # Unwind to the matching open tag, tolerating unclosed elements.
+        for index in range(len(self.stack) - 1, -1, -1):
+            if self.stack[index][0] == tag:
+                del self.stack[index:]
+                return
 
     def handle_data(self, data):
-        if self.depth or self.section is None:
+        if self.skipping or self.section is None:
             return
-        n = len(re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-/€%\.]*", data))
-        self.words[self.section] = self.words.get(self.section, 0) + n
+        self.words[self.section] = self.words.get(self.section, 0) + len(WORD_RE.findall(data))
 
 
 def main() -> int:
     path = sys.argv[1] if len(sys.argv) > 1 else "report.html"
+    parser = Counter()
     with open(path, encoding="utf-8") as fh:
-        parser = Counter()
         parser.feed(fh.read())
 
     total = sum(parser.words.values())
-    print(f"{'Section':<52}{'Words':>7}")
-    print("-" * 59)
+    print(f"{'Section':<50}{'Words':>7}{'Target':>8}")
+    print("-" * 65)
+    targets = {"1": 600, "2": 400, "3": 700, "4": 750, "5": 800, "6": 750}
     for name, count in parser.words.items():
-        print(f"{name:<52}{count:>7}")
-    print("-" * 59)
-    print(f"{'TOTAL (excl. diagrams, code, appendices)':<52}{total:>7}")
+        key = next((k for k in targets if name.startswith(f"Part {k}")), None)
+        target = f"{targets[key]}" if key else "—"
+        print(f"{name:<50}{count:>7}{target:>8}")
+    print("-" * 65)
+    print(f"{'TOTAL (excl. diagrams, code, appendices)':<50}{total:>7}{4000:>8}")
 
     low, high = 3900, 4100
     if total < low:
