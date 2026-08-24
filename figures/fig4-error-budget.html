@@ -1,0 +1,82 @@
+<figure>
+<svg viewBox="0 0 660 254" width="100%" role="img" aria-label="Error budget policy and incident response flow">
+  <defs>
+    <marker id="eb-arrow" viewBox="0 0 8 8" refX="6.5" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,1 L6,4 L0,7 z" fill="#55606e"/>
+    </marker>
+  </defs>
+  <style>
+    .eb-zone { font: 600 8px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#8a94a3; letter-spacing:.08em; }
+    .eb-box  { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#14315c; }
+    .eb-sub  { font: 7.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#55606e; }
+    .eb-wht  { font: 600 8.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#ffffff; }
+    .eb-wsub { font: 7.5px "Helvetica Neue", Helvetica, Arial, sans-serif; fill:#ffffff; }
+  </style>
+
+  <!-- budget policy -->
+  <text class="eb-zone" x="11" y="13">ERROR-BUDGET POLICY — 99.9% MONTHLY, ≈43 MINUTES</text>
+  <rect x="11" y="20" width="638" height="62" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+
+  <rect x="24" y="32" width="196" height="38" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="1"/>
+  <text class="eb-box" x="122" y="47" text-anchor="middle">Budget healthy (&gt; 25% left)</text>
+  <text class="eb-sub" x="122" y="61" text-anchor="middle">deploy freely, promotion automated</text>
+
+  <rect x="232" y="32" width="196" height="38" rx="3" fill="#dfe5ec" stroke="#8a94a3" stroke-width="1"/>
+  <text class="eb-box" x="330" y="47" text-anchor="middle">Below 25% remaining</text>
+  <text class="eb-sub" x="330" y="61" text-anchor="middle">reliability work takes priority</text>
+
+  <rect x="440" y="32" width="196" height="38" rx="3" fill="#b8442c"/>
+  <text class="eb-wht" x="538" y="47" text-anchor="middle">Budget exhausted</text>
+  <text class="eb-wsub" x="538" y="61" text-anchor="middle">change freeze until review actions close</text>
+
+  <g stroke="#55606e" stroke-width="0.9" marker-end="url(#eb-arrow)">
+    <line x1="220" y1="51" x2="230" y2="51"/>
+    <line x1="428" y1="51" x2="438" y2="51"/>
+  </g>
+
+  <!-- detection to response -->
+  <text class="eb-zone" x="11" y="104">DETECTION AND RESPONSE — ALERTS FOLLOW BURN RATE, NOT RAW THRESHOLDS</text>
+  <rect x="11" y="111" width="638" height="88" rx="4" fill="#f7f9fb" stroke="#dfe5ec" stroke-width="0.8"/>
+
+  <rect x="24" y="124" width="104" height="34" rx="3" fill="#14315c"/>
+  <text class="eb-wht" x="76" y="139" text-anchor="middle">Fast burn</text>
+  <text class="eb-wsub" x="76" y="151" text-anchor="middle">2% in 1 hour</text>
+
+  <rect x="24" y="164" width="104" height="26" rx="3" fill="#ffffff" stroke="#8a94a3" stroke-width="0.9"/>
+  <text class="eb-box" x="76" y="176" text-anchor="middle">Slow burn</text>
+  <text class="eb-sub" x="76" y="186" text-anchor="middle">raise a ticket</text>
+
+  <rect x="152" y="124" width="104" height="34" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="eb-box" x="204" y="139" text-anchor="middle">Page on-call</text>
+  <text class="eb-sub" x="204" y="151" text-anchor="middle">runbook attached</text>
+
+  <rect x="280" y="124" width="104" height="34" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="eb-box" x="332" y="139" text-anchor="middle">Mitigate</text>
+  <text class="eb-sub" x="332" y="151" text-anchor="middle">roll back or flag off</text>
+
+  <rect x="408" y="124" width="104" height="34" rx="3" fill="#ffffff" stroke="#14315c" stroke-width="0.9"/>
+  <text class="eb-box" x="460" y="139" text-anchor="middle">Restore service</text>
+  <text class="eb-sub" x="460" y="151" text-anchor="middle">RTO 1 h · RPO 15 m</text>
+
+  <rect x="536" y="124" width="100" height="34" rx="3" fill="#14315c"/>
+  <text class="eb-wht" x="586" y="139" text-anchor="middle">Blameless review</text>
+  <text class="eb-wsub" x="586" y="151" text-anchor="middle">within 5 days</text>
+
+  <g stroke="#55606e" stroke-width="0.9" marker-end="url(#eb-arrow)">
+    <line x1="128" y1="141" x2="150" y2="141"/>
+    <line x1="256" y1="141" x2="278" y2="141"/>
+    <line x1="384" y1="141" x2="406" y2="141"/>
+    <line x1="512" y1="141" x2="534" y2="141"/>
+  </g>
+
+  <!-- feedback loop -->
+  <path d="M586,158 L586,174 L340,174" stroke="#55606e" stroke-width="0.9" fill="none" stroke-dasharray="3 2" marker-end="url(#eb-arrow)"/>
+  <text class="eb-sub" x="340" y="190">actions become tracked backlog items — completion rate is measured</text>
+
+  <!-- self-healing note -->
+  <line x1="11" y1="214" x2="649" y2="214" stroke="#dfe5ec" stroke-width="0.8"/>
+  <text class="eb-sub" x="11" y="228">Before any human is paged: health checks replace failing tasks, autoscaling absorbs load, circuit breakers isolate a failing dependency,</text>
+  <text class="eb-sub" x="11" y="240">and a release is rolled back automatically if error-budget burn spikes during deployment.</text>
+</svg>
+<figcaption><b>Figure 4</b> — Error-budget policy and incident flow. The budget converts the speed-versus-stability argument into a rule decided in advance, and every incident ends by feeding tracked work back into the backlog.</figcaption>
+</figure>
