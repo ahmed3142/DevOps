@@ -1,0 +1,25 @@
+<section class="part" data-part="Part 2 — Version Control &amp; Workflow">
+  <div class="partlabel">Part 2</div>
+  <h2>Version Control and Collaborative Workflow</h2>
+  <p class="lead">Lecture 2 — branching strategy, code review, and traceability from ticket to running version.</p>
+
+  <h3>2.1 The chosen strategy</h3>
+  <p>Nimbus will adopt <strong>trunk-based development with short-lived branches</strong>. Every change is cut from <code>main</code>, lives on a branch for no more than two days, and returns through a pull request that requires a passing pipeline and one approving review. <code>main</code> is protected: no direct pushes, no force-pushes, and no merge without a green build. This is the workflow demonstrated in the supporting repository, where four feature branches were merged into a protected trunk and released as an annotated tag.</p>
+
+  <h3>2.2 Why not the alternatives</h3>
+  <p>GitFlow is the obvious incumbent choice and the wrong one here. Its <code>develop</code>, <code>release</code> and <code>hotfix</code> branches pay for themselves when a vendor ships versioned software to customers who choose when to upgrade. Nimbus runs a single production instance that every customer shares, so those branches would buy no isolation while formalising exactly the long-lived-branch behaviour that currently produces its seventeen-day lead time. Adopting GitFlow would institutionalise the disease as a process.</p>
+  <p>Committing directly to trunk without review — the purest form of trunk-based development — is equally unsuitable, for a cultural rather than a technical reason. Nimbus's central risk is that one engineer holds all production knowledge. A pull request is the cheapest knowledge-transfer mechanism available: it forces a second person to read every change, and it leaves a written record of why the change was made. Review here is not a quality gate bolted on out of distrust; it is deliberate redundancy in the team's understanding.</p>
+
+  <div class="decision">
+    <span class="title">Design decision — batch size is the real lever</span>
+    <p>The branching model matters mainly because it caps batch size. Twelve small merges a week produce less risk than one large merge a month, because each carries fewer changes, is easier to review honestly, is faster to diagnose when it fails, and is trivial to revert. Small batches improve lead time and change-failure rate simultaneously, which is why the two metrics tend to move together rather than trade against each other.</p>
+  </div>
+
+  <h3>2.3 Conventions, protection and release tagging</h3>
+  <p>Commits follow the Conventional Commits specification (<code>feat:</code>, <code>fix:</code>, <code>ci:</code>, <code>docs:</code>). The value is not tidiness but machine readability: a structured history allows changelogs and semantic version numbers to be generated rather than negotiated. Branch protection enforces the pipeline, the review and a linear-enough history; merge commits are retained deliberately, because a merge commit groups a feature's commits into a single revertible unit, whereas squashing discards the intermediate steps that make a bisect meaningful.</p>
+  <p>Releases are annotated semantic-version tags on <code>main</code>. A tag is the trigger for the release pipeline and the name of the immutable artefact it produces, so a version number identifies one specific commit, one specific image and one specific set of tests that passed.</p>
+
+  <h3>2.4 Traceability</h3>
+  <p>The workflow is designed so that a single unbroken chain connects a business request to a running process. The ticket identifier appears in the branch name, is carried into the commit messages, is referenced by the pull request that records the review and the approval, is captured by the release tag, is baked into the container image digest built from that tag, and is finally reported by the running service itself: the <code>/api/health</code> endpoint in the supporting repository returns the version it is executing. Any environment can therefore be traced back to the exact commit that produced it without asking anyone.</p>
+  <p>That chain is what turns version control from a backup mechanism into the organisation's audit trail. It answers the questions that matter during an incident — what changed, when, who approved it, and what did it replace — in seconds rather than in a forensic archaeology session across Slack history. It is also, at no additional cost, the evidence a future security questionnaire or investor's technical due diligence will ask for.</p>
+</section>
