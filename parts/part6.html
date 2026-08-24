@@ -1,0 +1,45 @@
+<section class="part" data-part="Part 6 — Cloud, Cost &amp; Leading the Change">
+  <div class="partlabel">Part 6</div>
+  <h2>Cloud, Cost and Leading the Change</h2>
+  <p class="lead">Lectures 13, 14 and 15 — cloud environment management, FinOps, and the adoption roadmap.</p>
+
+  <h3>6.1 Cloud environment management</h3>
+  <p>Environments are separated into distinct cloud accounts rather than distinguished by naming convention inside one account. This bounds the blast radius of a mistake, makes least-privilege access straightforward, and produces clean cost attribution for free, since the bill arrives already divided by environment. Organisation-level guardrails prevent whole classes of error — deploying into unapproved regions, or disabling audit logging — without requiring anyone to remember the rule.</p>
+
+  <h3>6.2 FinOps: making cost a design input</h3>
+  <p>The scenario's climbing bill with no clear owner is not primarily a technical problem. Cost is being decided by engineers making architectural choices and reviewed by nobody, because the people who spend the money never see the invoice. FinOps closes that loop in three stages.</p>
+  <p><strong>Inform.</strong> Tagging is mandatory and enforced by the policy checks described in Part 5, so every resource declares its owner, environment, service and cost centre. Dashboards are visible to engineers, not just to finance. The headline figure is deliberately a unit measure — infrastructure cost per tenant per month — because absolute spend rising is not a problem if revenue rises faster, whereas cost per tenant rising means the business becomes less profitable as it grows.</p>
+  <p><strong>Optimise.</strong> The immediate wins are unglamorous and large: right-sizing instances provisioned for a peak that never arrives, autoscaling to real demand, committed-use discounts for the stable baseline only, spot capacity for pipeline runners, storage lifecycle and log retention tiers, deleting orphaned volumes and idle load balancers, and shutting non-production environments outside working hours — which alone typically removes around two-thirds of their cost.</p>
+  <p><strong>Operate.</strong> Budgets and anomaly alerts route to the owning team rather than to a monthly finance review, and a cost-estimation step in each pull request shows the monetary delta of an infrastructure change before it merges. Cost becomes a design-time input in the same way that test results are, rather than a surprise discovered in arrears.</p>
+  <div class="callout">
+    <span class="title">Trade-off honesty</span>
+    <p>Optimisation is itself an investment, and at Nimbus's size engineering time costs more than the infrastructure. Spending three weeks of engineering effort to recover a few hundred euro a month is a poor trade; the work is prioritised by return, and the first target is the unowned waste — idle non-production capacity and oversized instances — rather than architectural rewrites that promise efficiency at the cost of delivery speed. Above all, a named human owns the number. The scenario's real defect is the absent owner, and no tool substitutes for one.</p>
+  </div>
+
+  <h3>6.3 Leading the change</h3>
+  <p>The technical plan is the straightforward half. Nimbus's transformation will succeed or fail on whether seven people change how they work, and the sequencing must respect that.</p>
+  <p>The change starts with pain the team already feels rather than with an abstract maturity model. Automating the release that everyone dreads buys credibility for everything that follows, whereas beginning with policy enforcement would be experienced as bureaucracy imposed on people who never asked for it.</p>
+  <p>The most important stakeholder is Sam. The single expert can veto this programme, and their standing in the company currently derives from being indispensable — so a plan that quietly removes that status will be resisted, whatever the engineering merits. The framing must be a promotion rather than a dilution: Sam becomes the owner and architect of the new platform, with the pipeline and infrastructure code as their product. Knowledge transfer is then structural rather than aspirational, through pairing, mandatory review and written architecture decision records, and it is measured — the number of engineers who can independently deploy and recover production is tracked as an explicit metric, starting at one.</p>
+  <p>Different audiences need the same programme described in their own terms. Founders and investors hear reduced delivery risk, a defensible due-diligence answer and improving cost per tenant. Sales hears fewer incidents and faster commitments. Engineers hear fewer interruptions and no weekend releases. The underlying work is identical; presenting it in a single vocabulary is how such programmes lose their sponsor.</p>
+  <p>Technical debt is handled with a standing allocation — roughly a fifth of each iteration — rather than a promised remediation sprint that is always displaced by a customer commitment. The debt is recorded in a visible register with its ongoing cost stated, because "we should tidy this up" loses every prioritisation argument while "this costs us six engineer-hours a month" wins many. Documentation lives in the repository beside the code it describes, and decision records preserve the <em>reasoning</em>, which is the part that leaves with a departing employee.</p>
+  <p>Finally, "you build it, you run it" is adopted with a caveat that is often omitted: it only works when the team also holds the authority to change what they run and the time to do it. Without both, it is simply extra pager duty, and it will be rejected — reasonably.</p>
+
+  <h3>6.4 A staged roadmap</h3>
+  <table class="data">
+    <caption>Table 4 — Twelve-month adoption roadmap</caption>
+    <thead><tr><th>Stage</th><th>Focus</th><th>Principal changes</th><th>Exit condition</th></tr></thead>
+    <tbody>
+      <tr><td>0 · Weeks 1–2</td><td>Measure</td><td>Instrument the four delivery metrics and baseline cloud cost; change nothing else</td><td>A baseline the team agrees with</td></tr>
+      <tr><td>1 · Weeks 3–8</td><td>Make it repeatable</td><td>Protected trunk, pull requests, CI with tests, containerisation, staging in Terraform, secrets removed from files</td><td>Any engineer can produce a deployable artefact</td></tr>
+      <tr><td>2 · Months 3–5</td><td>Make it safe</td><td>Production under Terraform, blue-green with automated rollback, expand/contract migrations, telemetry, first SLOs, on-call and runbooks</td><td>Weekly releases without a release weekend</td></tr>
+      <tr><td>3 · Months 6–9</td><td>Make it secure and economical</td><td>Full security gates, OIDC, signing and SBOM, policy as code, FinOps tagging and unit economics, tested restores</td><td>Security questionnaire answered from evidence</td></tr>
+      <tr><td>4 · Months 9–12</td><td>Make it self-service</td><td>Preview environments, progressive delivery, game days, platform documentation; revisit orchestration against its triggers</td><td>Daily deployment as routine</td></tr>
+    </tbody>
+  </table>
+  <p>The order is deliberate. Measurement precedes change because an improvement that cannot be evidenced cannot be funded. Repeatability precedes safety because automated rollback is meaningless without a reproducible artefact to roll back to. Security and cost follow rather than lead, not because they matter less, but because gates applied to a process that is still manual are simply obstacles.</p>
+  <p>The principal risks are change fatigue, which is managed by limiting the programme to one significant change at a time; the funding round consuming attention, mitigated by tying each stage to a question diligence will ask; and automation theatre — measuring pipelines built rather than outcomes improved.</p>
+
+  <h3>6.5 Measuring success</h3>
+  <p>Progress is reviewed monthly against the baseline in Table 1: the four delivery metrics, attainment of the service level objectives and error-budget consumption, infrastructure cost per tenant, the number of engineers able to deploy and recover production, and the proportion of engineering time spent on unplanned interruption. The twelve-month goal is daily deployment, lead time under a day, change failure below ten per cent and restoration within thirty minutes — at a lower cost per customer than today.</p>
+  <p>That combination is the point. The persistent assumption at Nimbus, and the one this strategy is designed to disprove, is that speed must be traded against stability. The research underpinning the DORA metrics finds the opposite: the practices that make delivery fast — small batches, automated verification, reproducible environments, fast feedback — are the same ones that make it safe, because a small, tested, reversible change is both quicker to ship and easier to diagnose when it fails.</p>
+</section>
