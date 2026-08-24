@@ -4,11 +4,11 @@
   <p class="lead">Lectures 4, 5 and 6 — continuous integration, automated testing, and release strategy with rollback.</p>
 
   <h3>3.1 Pipeline shape</h3>
-  <p>Figure 2 sets out the target pipeline. A push triggers static analysis, unit tests and a production build; a container image is then built once and tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is only then promoted to production — re-using the identical artefact, with nothing rebuilt per environment.</p>
+  <p>Figure 2 sets out the target pipeline. A push triggers static analysis, unit tests and a production build; a container image is then built once and tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is only then promoted to production — the identical artefact, nothing rebuilt per environment.</p>
   <p><strong>Build once, deploy many</strong> is the most important property of the design. If each environment compiles its own artefact, the thing tested in staging is not the thing running in production, and the team argues about a difference nobody can reproduce — Nimbus's most common failure mode. The supporting repository implements the first half of this pipeline today: every push runs lint, tests and a production build, and a dependent job builds the image from the same commit.</p>
 
   <h3>3.2 Automated testing</h3>
-  <p>Testing is organised as a pyramid, costed by execution time because feedback speed is the property being bought.</p>
+  <p>Testing is organised as a pyramid, costed by execution time because feedback speed is what is being bought.</p>
   <table class="data">
     <caption>Table 2 — Target test portfolio</caption>
     <thead><tr><th>Layer</th><th>Scope</th><th>Volume</th><th>Budget</th><th>Runs</th></tr></thead>
@@ -26,7 +26,6 @@
     <li><strong>Lint and type checking</strong> — any error fails the build.</li>
     <li><strong>Unit and integration tests</strong> — all must pass; coverage is governed by a <em>ratchet</em> forbidding a decrease rather than a fixed percentage, because a fixed target such as eighty per cent invites tests written to satisfy the number rather than the risk.</li>
     <li><strong>Dependency and container scanning</strong> — critical or high severity findings with an available fix block the merge; lower severities open a tracked issue.</li>
-    <li><strong>Infrastructure policy checks</strong> — Terraform plans are evaluated against policy before they may be applied (Part 5).</li>
     <li><strong>Pipeline duration</strong> — a hard ten-minute budget from push to feedback; exceeding it is logged as a platform defect, because a slow pipeline gets routed around, and a gate that is routed around is not a gate.</li>
   </ul>
 
