@@ -284,3 +284,17 @@ code { font-family: Menlo, Consolas, "Courier New", monospace; font-size: 0.88em
   font-size: 10pt;
   text-align: left;
 }
+
+.cs-logos { margin-bottom: 16pt; }
+.cs-logos img { height: 58pt; width: auto; }
+.cs-signatures { width: 100%; border-collapse: collapse; }
+.cs-signatures td {
+  border: 0.75pt solid #000;
+  border-top: 0;
+  width: 50%;
+  padding: 34pt 10pt 10pt;
+  text-align: center;
+}
+.cs-sigline { border-bottom: 0.75pt solid #000; width: 62%; margin: 0 auto 4pt; height: 1pt; }
+.cs-siglabel { font-weight: 700; font-style: italic; font-size: 10.5pt; }
+.cs-sigdate { font-weight: 700; font-style: italic; font-size: 10.5pt; }

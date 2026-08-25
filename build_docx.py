@@ -310,6 +310,13 @@ def build_coversheet(doc):
               align=WD_ALIGN_PARAGRAPH.CENTER, space_after=14)
     t.runs[0].font.name = "Times New Roman"
 
+    logo = ROOT / "logos" / "learnkey.png"
+    if logo.exists():
+        lp = doc.add_paragraph()
+        lp.alignment = WD_ALIGN_PARAGRAPH.LEFT
+        lp.paragraph_format.space_after = Pt(12)
+        lp.add_run().add_picture(str(logo), height=Cm(1.75))
+
     i = plain(doc, "This cover sheet must be completed and added to the front of every assignment",
               size=11, bold=True, italic=True, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=6)
     i.runs[0].font.name = "Times New Roman"
@@ -351,6 +358,23 @@ def build_coversheet(doc):
         r = par.add_run(f"{n}.  {line}")
         r.bold = True; r.italic = True; r.font.size = Pt(10.5); r.font.name = "Times New Roman"
     box_borders(dec)
+
+    sig = doc.add_table(rows=1, cols=2).rows[0]
+    for idx, label in enumerate(("Learner signature", "Tutor signature")):
+        cell = sig.cells[idx]
+        cell.text = ""
+        spacer = cell.paragraphs[0]
+        spacer.paragraph_format.space_after = Pt(20)
+        for text, is_rule in (("__________________________", True), (label, False), ("Date:", False)):
+            par = cell.add_paragraph()
+            par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            par.paragraph_format.space_after = Pt(1)
+            r = par.add_run(text)
+            r.font.size = Pt(10.5)
+            r.font.name = "Times New Roman"
+            r.bold = not is_rule
+            r.italic = not is_rule
+        box_borders(cell)
 
     note = doc.add_table(rows=1, cols=1).rows[0].cells[0]
     cell_text(note, "Note: Assignments must be submitted in typed PDF format only; handwritten assignments "
