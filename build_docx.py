@@ -264,6 +264,130 @@ def set_cell_borders(cell, top=None, bottom=None):
     tcPr.append(borders)
 
 
+def box_borders(cell, edges=("top", "bottom", "left", "right")):
+    tcPr = cell._tc.get_or_add_tcPr()
+    borders = OxmlElement("w:tcBorders")
+    for edge in ("top", "bottom", "left", "right"):
+        e = OxmlElement(f"w:{edge}")
+        if edge in edges:
+            e.set(qn("w:val"), "single")
+            e.set(qn("w:sz"), "6")
+            e.set(qn("w:color"), "000000")
+        else:
+            e.set(qn("w:val"), "nil")
+        borders.append(e)
+    tcPr.append(borders)
+
+
+def cell_text(cell, text, bold=False, italic=False, size=10.5, align=None, space=2):
+    cell.text = ""
+    par = cell.paragraphs[0]
+    par.alignment = align if align is not None else WD_ALIGN_PARAGRAPH.LEFT
+    par.paragraph_format.space_after = Pt(space)
+    par.paragraph_format.space_before = Pt(space)
+    r = par.add_run(text)
+    r.font.size = Pt(size)
+    r.font.name = "Times New Roman"
+    r.bold = bold
+    r.italic = italic
+    r.font.color.rgb = RGBColor(0, 0, 0)
+    return par
+
+
+def build_coversheet(doc):
+    """The institute's Assignment Cover Sheet, reproduced as the first page."""
+    t = plain(doc, "Assignment Cover Sheet", size=16, bold=True, italic=True,
+              align=WD_ALIGN_PARAGRAPH.CENTER, space_after=14)
+    t.runs[0].font.name = "Times New Roman"
+
+    logos = [("learnkey.png", "Learn Key Institute"),
+             ("othm.png", "OTHM Qualifications"),
+             ("mfhea.png", "Malta Further & Higher Education Authority")]
+    row = doc.add_table(rows=1, cols=3).rows[0]
+    for idx, (fname, label) in enumerate(logos):
+        cell = row.cells[idx]
+        cell.text = ""
+        par = cell.paragraphs[0]
+        par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        path = ROOT / "logos" / fname
+        if path.exists():
+            par.add_run().add_picture(str(path), height=Cm(1.6))
+        else:
+            r = par.add_run(f"[{label} logo]")
+            r.font.size = Pt(8)
+            r.italic = True
+            r.font.color.rgb = MUTED
+        box_borders(cell, edges=())
+    plain(doc, space_after=6)
+
+    i = plain(doc, "This cover sheet must be completed and added to the front of every assignment",
+              size=11, bold=True, italic=True, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=6)
+    i.runs[0].font.name = "Times New Roman"
+
+    fields = [
+        ("Learner Name and Surname:", "Imran Hossain Chowdhury", False),
+        ("Learner Registration No.", "11248", False),
+        ("Study Centre Name", "Learn Key Institute", True),
+        ("Qualification Title", "Undergraduate Diploma in Software Design MQF (Lv.5) — Group A", False),
+        ("Unit Reference No.", "", False),
+        ("Unit Title", "DevOps Delivery Strategy — Individual Project & Portfolio", False),
+        ("Submission Date", "29/08/2026", False),
+    ]
+    tbl = doc.add_table(rows=0, cols=2)
+    for label, value, bold_value in fields:
+        r = tbl.add_row()
+        cell_text(r.cells[0], label, bold=True, italic=True)
+        cell_text(r.cells[1], value, bold=bold_value)
+        box_borders(r.cells[0]); box_borders(r.cells[1])
+    tbl.columns[0].width = Cm(6.2)
+    tbl.columns[1].width = Cm(10.3)
+
+    dec = doc.add_table(rows=1, cols=1).rows[0].cells[0]
+    dec.text = ""
+    head = dec.paragraphs[0]
+    head.paragraph_format.space_after = Pt(4)
+    hr = head.add_run("Declaration of authenticity:")
+    hr.bold = True; hr.italic = True; hr.font.size = Pt(10.5); hr.font.name = "Times New Roman"
+    for n, line in enumerate([
+        "I declare that the attached submission is my own original work. No significant part of it has been "
+        "submitted for any other assignment and I have acknowledged in my notes and bibliography all written "
+        "and electronic sources used.",
+        "I acknowledge that my assignment will be subject to electronic scrutiny for academic honesty.",
+        "I understand that failure to meet these guidelines may instigate the centre's malpractice procedures "
+        "and risk failure of the unit and/or qualification.",
+    ], start=1):
+        par = dec.add_paragraph()
+        par.paragraph_format.space_after = Pt(4)
+        par.paragraph_format.left_indent = Cm(0.6)
+        r = par.add_run(f"{n}.  {line}")
+        r.bold = True; r.italic = True; r.font.size = Pt(10.5); r.font.name = "Times New Roman"
+    box_borders(dec)
+
+    sig = doc.add_table(rows=1, cols=2).rows[0]
+    for idx, label in enumerate(("Learner signature", "Tutor signature")):
+        cell = sig.cells[idx]
+        cell.text = ""
+        blank = cell.paragraphs[0]
+        blank.paragraph_format.space_after = Pt(18)
+        for text in ("__________________________", label, "Date:"):
+            par = cell.add_paragraph()
+            par.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            par.paragraph_format.space_after = Pt(1)
+            r = par.add_run(text)
+            r.font.size = Pt(10.5)
+            r.font.name = "Times New Roman"
+            r.bold = text != "__________________________"
+            r.italic = text != "__________________________"
+        box_borders(cell)
+
+    note = doc.add_table(rows=1, cols=1).rows[0].cells[0]
+    cell_text(note, "Note: Assignments must be submitted in typed PDF format only; handwritten assignments "
+                    "are not accepted.", size=10)
+    box_borders(note)
+
+    doc.add_page_break()
+
+
 def add_runs(par, runs, size=Pt(10.5), colour=INK, italic=False):
     for text, fmt in runs:
         r = par.add_run(text)
@@ -418,7 +542,7 @@ def plain(doc, text="", size=10.5, colour=INK, bold=False, italic=False,
 def build_cover(doc):
     p = plain(doc, "LEARNKEY INSTITUTE  ·  MALTA CAMPUS", size=9, colour=MUTED,
               align=WD_ALIGN_PARAGRAPH.LEFT, space_after=2)
-    p = plain(doc, "Award in Introduction to DevOps: Principles and Practices  ·  10 ECTS  ·  MQF/EQF Level 5",
+    p = plain(doc, "Undergraduate Diploma in Software Design  ·  MQF Level 5  ·  Group A",
               size=9, colour=MUTED, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=4)
     hrule(p, size=12)
 
@@ -444,8 +568,9 @@ def build_cover(doc):
     meta = doc.add_table(rows=0, cols=2)
     meta.alignment = WD_TABLE_ALIGNMENT.LEFT
     for label, value in (
-        ("Author", "Imran Chowdhury"),
-        ("Assessment", "Individual Project-Based Assessment (100% of module mark)"),
+        ("Author", "Imran Hossain Chowdhury"),
+        ("Registration no.", "11248"),
+        ("Unit", "DevOps Delivery Strategy — Individual Project & Portfolio"),
         ("Supporting repository", "github.com/imranneta5555/DevOps"),
         ("Date", "29 August 2026"),
     ):
@@ -661,6 +786,7 @@ def main():
     s.bottom_margin = Cm(2.0)
 
     add_footer(doc)
+    build_coversheet(doc)
     build_cover(doc)
     build_toc(doc)
 
