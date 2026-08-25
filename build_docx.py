@@ -21,6 +21,16 @@ from docx.shared import Cm, Pt, RGBColor
 ROOT = Path(__file__).parent
 OUT = ROOT / "out" / "DevOps_Delivery_Strategy.docx"
 
+
+def _assessed_word_count() -> str:
+    """Reads the count stamped onto report.html by assemble.py."""
+    import re
+    m = re.search(r"([\d,]+) words \(excluding", (ROOT / "report.html").read_text(encoding="utf-8"))
+    return m.group(1) if m else "—"
+
+
+WORD_COUNT = _assessed_word_count()
+
 BODY_FONT = "Cambria"
 HEAD_FONT = "Cambria"
 MONO_FONT = "Consolas"
@@ -542,7 +552,7 @@ def plain(doc, text="", size=10.5, colour=INK, bold=False, italic=False,
 def build_cover(doc):
     p = plain(doc, "LEARNKEY INSTITUTE  ·  MALTA CAMPUS", size=9, colour=MUTED,
               align=WD_ALIGN_PARAGRAPH.LEFT, space_after=2)
-    p = plain(doc, "Undergraduate Diploma in Software Design  ·  MQF Level 5  ·  Group A",
+    p = plain(doc, "Undergraduate Diploma in Software Design  ·  MQF Level 5  ·  Group A\nModule: Introduction to DevOps: Principles and Practices",
               size=9, colour=MUTED, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=4)
     hrule(p, size=12)
 
@@ -571,6 +581,7 @@ def build_cover(doc):
         ("Author", "Imran Hossain Chowdhury"),
         ("Registration no.", "11248"),
         ("Unit", "DevOps Delivery Strategy — Individual Project & Portfolio"),
+        ("Word count", f"{WORD_COUNT} words (excluding diagrams, code and appendices)"),
         ("Supporting repository", "github.com/imranneta5555/DevOps"),
         ("Date", "29 August 2026"),
     ):
