@@ -79,7 +79,7 @@ def main() -> int:
     body = body.replace(
         "<h1>Presentation notes &amp; defence preparation</h1>",
         '<div class="titleblock"><h1>Presentation Notes and Defence Preparation</h1>'
-        '<p class="subtitle">A DevOps Delivery Strategy for Nimbus Ltd. · Scenario B · Imran Chowdhury</p></div>',
+        '<p class="subtitle">A DevOps Delivery Strategy for Nimbus Ltd. · Scenario B · Imran Hossain Chowdhury</p></div>',
         1,
     )
     OUT.write_text(
