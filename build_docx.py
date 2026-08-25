@@ -758,7 +758,6 @@ def main():
     s.top_margin = Cm(2.0)
     s.bottom_margin = Cm(2.0)
 
-    add_footer(doc)
     build_coversheet(doc)
     build_cover(doc)
     build_toc(doc)

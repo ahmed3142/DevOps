@@ -9,7 +9,7 @@ set -euo pipefail
 
 SRC="${1:-report.html}"
 OUT="${2:-out/DevOps_Delivery_Strategy.pdf}"
-LABEL="${3:-DevOps Delivery Strategy — Nimbus (Scenario B)}"
+LABEL="${3:-none}"
 
 export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-$HOME/Library/Caches/ms-playwright}"
 PW_DIR="$(find "$HOME/.npm/_npx" -maxdepth 3 -type d -name playwright 2>/dev/null | head -1)"

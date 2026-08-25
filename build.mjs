@@ -28,7 +28,8 @@ function resolvePlaywright() {
 
 const src = process.argv[2] ?? "report.html";
 const out = process.argv[3] ?? "out/DevOps_Delivery_Strategy.pdf";
-const footerLabel = process.argv[4] ?? "DevOps Delivery Strategy — Nimbus (Scenario B)";
+const footerLabel = process.argv[4] ?? "none";
+const showFooter = footerLabel !== "none" && footerLabel !== "";
 
 if (!fs.existsSync(src)) {
   console.error(`source not found: ${src}`);
@@ -53,12 +54,14 @@ await page.pdf({
   path: out,
   format: "A4",
   printBackground: true,
-  displayHeaderFooter: true,
+  displayHeaderFooter: showFooter,
   headerTemplate: "<div></div>",
-  footerTemplate: `<div style="font-family:Helvetica,Arial,sans-serif;font-size:8pt;color:#6b7280;width:100%;padding:0 18mm;display:flex;justify-content:space-between;">
+  footerTemplate: showFooter
+    ? `<div style="font-family:Helvetica,Arial,sans-serif;font-size:8pt;color:#6b7280;width:100%;padding:0 18mm;display:flex;justify-content:space-between;">
       <span>${footerLabel}</span>
       <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-    </div>`,
+    </div>`
+    : "<div></div>",
   margin: { top: "16mm", bottom: "16mm", left: "18mm", right: "18mm" },
 });
 
