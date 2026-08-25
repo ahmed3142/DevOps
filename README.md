@@ -8,6 +8,7 @@ Source for the written report (Deliverable 1) and presentation (Deliverable 3) o
 ./build.sh          # assembles and renders out/DevOps_Delivery_Strategy.pdf
 ./build-docx.sh     # renders out/DevOps_Delivery_Strategy.docx (Word)
 ./build-slides.sh   # renders out/DevOps_Presentation.pdf (19 slides, 16:9)
+./build-notes.sh    # renders out/DevOps_Presentation_Notes.pdf (speaker notes + defence Q&A)
 python3 wordcount.py report.html                    # assessed word count, per part
 python3 wordcount.py report.html --exclude-tables   # count with tables excluded too
 ```
@@ -30,7 +31,7 @@ Both scripts render through Playwright's Chromium so the report carries a page-n
 | `shots/` | Screenshots and rasterised figures used by both output formats |
 | `WRITING_GUIDE.md` | The argument for each part as notes to write the prose from |
 | `AUDIT.md` | Rubric self-audit, known deviations and the submission checklist |
-| `PRESENTATION_NOTES.md` | Speaker notes per slide and fifteen prepared defence answers |
+| `PRESENTATION_NOTES.md` | Speaker notes per slide and fifteen prepared defence answers; `build_notes.py` renders it to PDF |
 
 `report.html` and `slides.html` are generated — they are not committed. Edit the sources and rebuild.
 

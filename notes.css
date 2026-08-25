@@ -1,0 +1,82 @@
+/* Print stylesheet for the defence notes — same palette as the report. */
+:root {
+  --ink: #14161a;
+  --muted: #5b626b;
+  --rule: #d6d9dd;
+  --accent: #7b2d26;
+  --shade: #f4f2ef;
+}
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+body {
+  font-family: Charter, Cambria, Georgia, "Times New Roman", serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: var(--ink);
+  margin: 0;
+}
+
+h1 {
+  font-size: 21pt;
+  margin: 0 0 4pt;
+  letter-spacing: -0.01em;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: 10pt;
+  font-style: italic;
+  margin: 0 0 4pt;
+}
+.titleblock {
+  border-bottom: 1.5pt solid var(--ink);
+  padding-bottom: 10pt;
+  margin-bottom: 14pt;
+}
+
+h2 {
+  font-size: 14pt;
+  margin: 0 0 10pt;
+  padding-bottom: 5pt;
+  border-bottom: 1.5pt solid var(--ink);
+  break-before: page;
+  page-break-before: always;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+h2.first { break-before: auto; page-break-before: auto; }
+
+p { margin: 0 0 8pt; }
+strong { font-weight: 700; }
+code {
+  font-family: Menlo, Consolas, monospace;
+  font-size: 0.87em;
+  background: var(--shade);
+  padding: 0.5pt 2.5pt;
+}
+
+/* slide-by-slide entries */
+.slidenote {
+  margin: 0 0 9pt;
+  padding-left: 11pt;
+  border-left: 1.5pt solid var(--rule);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.slidenote .lead { color: var(--accent); font-weight: 700; }
+
+/* question and answer pairs */
+.qa {
+  margin: 0 0 11pt;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.qa .q {
+  font-weight: 700;
+  color: var(--accent);
+  margin: 0 0 3pt;
+}
+.qa .a { margin: 0; padding-left: 11pt; border-left: 1.5pt solid var(--rule); }
+
+.intro { color: var(--muted); font-size: 10pt; margin-bottom: 12pt; }
+hr { border: 0; border-top: 0.5pt solid var(--rule); margin: 12pt 0; }

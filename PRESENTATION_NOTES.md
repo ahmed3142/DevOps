@@ -24,13 +24,13 @@ Deck: `out/DevOps_Presentation.pdf` (19 slides, 16:9). Suggested running time **
 
 **9 · Blue-green and why not canary.** Be clear that canary is deferred, not rejected, and give the two reasons: insufficient traffic for a fast statistical signal, and no observability yet to judge it. The memorable line is **"a canary without observability is just a slower outage."**
 
-**10 · Architecture (Figure 3).** The single most important idea: staging and production come from the *same* Terraform modules with different variables, so parity is structural rather than a matter of discipline.
+**10 · Architecture (Figure 4).** The single most important idea: staging and production come from the *same* Terraform modules with different variables, so parity is structural rather than a matter of discipline.
 
 **11 · Drift.** Stress that detection alone is insufficient — that is why there are four layers, starting with removing the cause (no interactive SSH). The reviewable `terraform plan` in a pull request is a governance argument, not just a technical one.
 
 **12 · Kubernetes.** Expect a challenge here, so state the reasoning cleanly: Kubernetes would recreate the bus-factor-of-one problem at a higher altitude. Then immediately give the named triggers for revisiting — that converts an opinion into a decision record.
 
-**13 · Error budget (Figure 4).** The framing that earns marks: the error budget converts speed-versus-stability from an argument usually won by whoever is most senior into a rule agreed in advance.
+**13 · Error budget (Figure 5).** The framing that earns marks: the error budget converts speed-versus-stability from an argument usually won by whoever is most senior into a rule agreed in advance.
 
 **14 · Security and recovery.** Two lines carry this slide: prevention beats rotation because Git history is permanent, and a backup that has never been restored is an assumption rather than a control.
 
