@@ -298,3 +298,6 @@ code { font-family: Menlo, Consolas, "Courier New", monospace; font-size: 0.88em
 .cs-sigline { border-bottom: 0.75pt solid #000; width: 62%; margin: 0 auto 4pt; height: 1pt; }
 .cs-siglabel { font-weight: 700; font-style: italic; font-size: 10.5pt; }
 .cs-sigdate { font-weight: 700; font-style: italic; font-size: 10.5pt; }
+
+/* Standalone blank template: give the empty fields room to be filled in. */
+body > .coversheet .cs-fields td { height: 20pt; }

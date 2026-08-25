@@ -9,6 +9,7 @@ Source for the written report (Deliverable 1) and presentation (Deliverable 3) o
 ./build-docx.sh     # renders out/DevOps_Delivery_Strategy.docx (Word)
 ./build-slides.sh   # renders out/DevOps_Presentation.pdf (19 slides, 16:9)
 ./build-notes.sh    # renders out/DevOps_Presentation_Notes.pdf (speaker notes + defence Q&A)
+./build-blank-cover.sh  # renders the reusable blank Assignment Cover Sheet (PDF + DOCX)
 python3 wordcount.py report.html                    # assessed word count, per part
 python3 wordcount.py report.html --exclude-tables   # count with tables excluded too
 ```
@@ -24,6 +25,8 @@ Both scripts render through Playwright's Chromium so the report carries a page-n
 | `parts/appendix.html` | Appendix A (artefacts) and Appendix B (references) |
 | `figures/*.html` | Inline SVG figures with captions, referenced by `<!-- FIGURE:name -->` markers |
 | `slides-src.html` | Presentation deck source; reuses the same figure fragments |
+| `blank-cover.html` / `build_blank_cover.py` | Reusable blank Assignment Cover Sheet, for future assignments |
+| `logos/` | Institute logo used on the cover sheet |
 | `styles.css` / `slides.css` | Print stylesheets for the report and the deck |
 | `assemble.py` | Builds `report.html` and `slides.html` from the sources |
 | `build_docx.py` | Builds the Word version from the same HTML, embedding rasterised figures |
