@@ -13,26 +13,6 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 PART_FILES = [f"part{n}.html" for n in range(1, 7)]
 
-# The institute cover sheet expects three logos. Any that are not supplied are
-# drawn as labelled placeholders so the gap is obvious rather than silent.
-LOGOS = [
-    ("learnkey.png", "Learn Key Institute"),
-    ("othm.png", "OTHM Qualifications"),
-    ("mfhea.png", "Malta Further &amp; Higher Education Authority"),
-]
-
-
-def logo_markup() -> str:
-    left, right = [], []
-    for index, (filename, label) in enumerate(LOGOS):
-        path = ROOT / "logos" / filename
-        if path.exists():
-            item = f'<img src="logos/{filename}" alt="{label}">'
-        else:
-            item = f'<div class="cs-logoslot">{label}<br>logo</div>'
-        (left if index == 0 else right).append(item)
-    return left[0] + '<div class="cs-logostack">' + "".join(right) + "</div>"
-
 
 FIGURE_RE = re.compile(r"<!--\s*FIGURE:([a-z0-9\-]+)\s*-->")
 
@@ -62,7 +42,7 @@ def main() -> int:
     parts = "\n".join(load(name) for name in PART_FILES if load(name))
     appendix = load("appendix.html")
 
-    coversheet = load("coversheet.html").replace("<!-- LOGOS -->", logo_markup())
+    coversheet = load("coversheet.html")
 
     html = template.replace("<!-- COVERSHEET_PLACEHOLDER -->", coversheet)
     html = html.replace("<!-- PARTS_PLACEHOLDER -->", parts)
