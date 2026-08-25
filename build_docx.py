@@ -359,12 +359,20 @@ def build_coversheet(doc):
         r.bold = True; r.italic = True; r.font.size = Pt(10.5); r.font.name = "Times New Roman"
     box_borders(dec)
 
+    signature = next((ROOT / "logos" / n for n in ("signature.png", "signature.jpg", "signature.jpeg")
+                      if (ROOT / "logos" / n).exists()), None)
+
     sig = doc.add_table(rows=1, cols=2).rows[0]
     for idx, label in enumerate(("Learner signature", "Tutor signature")):
         cell = sig.cells[idx]
         cell.text = ""
         spacer = cell.paragraphs[0]
-        spacer.paragraph_format.space_after = Pt(20)
+        spacer.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        if idx == 0 and signature is not None:
+            spacer.paragraph_format.space_after = Pt(0)
+            spacer.add_run().add_picture(str(signature), height=Cm(1.2))
+        else:
+            spacer.paragraph_format.space_after = Pt(20)
         for text, is_rule in (("__________________________", True), (label, False), ("Date:", False)):
             par = cell.add_paragraph()
             par.alignment = WD_ALIGN_PARAGRAPH.CENTER

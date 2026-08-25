@@ -301,3 +301,5 @@ code { font-family: Menlo, Consolas, "Courier New", monospace; font-size: 0.88em
 
 /* Standalone blank template: give the empty fields room to be filled in. */
 body > .coversheet .cs-fields td { height: 20pt; }
+
+.cs-signature { display: block; height: 34pt; width: auto; margin: 0 auto -6pt; }

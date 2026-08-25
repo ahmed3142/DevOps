@@ -29,6 +29,14 @@ def inline_figures(html: str) -> str:
     return FIGURE_RE.sub(replace, html)
 
 
+def signature_markup() -> str:
+    """Drops the learner's own signature image in, when one has been supplied."""
+    for name in ("signature.png", "signature.jpg", "signature.jpeg"):
+        if (ROOT / "logos" / name).exists():
+            return f'<img class="cs-signature" src="logos/{name}" alt="Learner signature">'
+    return ""
+
+
 def load(name: str) -> str:
     path = ROOT / "parts" / name
     if not path.exists():
@@ -42,7 +50,7 @@ def main() -> int:
     parts = "\n".join(load(name) for name in PART_FILES if load(name))
     appendix = load("appendix.html")
 
-    coversheet = load("coversheet.html")
+    coversheet = load("coversheet.html").replace("<!-- SIGNATURE -->", signature_markup())
 
     html = template.replace("<!-- COVERSHEET_PLACEHOLDER -->", coversheet)
     html = html.replace("<!-- PARTS_PLACEHOLDER -->", parts)
