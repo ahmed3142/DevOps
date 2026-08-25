@@ -6,14 +6,14 @@
   </div>
 
   <h3>4.1 The problem with the current servers</h3>
-  <p>The two production servers are pets: named, hand-reared and understood by one person. Their real configuration exists only in the running machine and in Sam's memory, and neither copy can be reviewed, compared or restored. Every manual fix applied under incident pressure widens the gap between the two servers, and between production and staging. This is the mechanism behind failures that reproduce in one environment and not another, and no amount of care will remove it. The remedy is to make infrastructure an output of a build rather than an accumulation of history.</p>
+  <p>The two production servers are pets: named, hand-reared and understood by one person. Their real configuration exists only in the running machine and in Sam's memory, and neither copy can be reviewed, compared or restored. Every manual fix under incident pressure widens the gap between the two servers, and between production and staging. The remedy is to make infrastructure an output of a build rather than an accumulation of history.</p>
 
   <h3>4.2 Declarative code rather than a deployment script</h3>
-  <p>Nimbus already has automation in <code>deploy.sh</code>. The distinction that matters is that the script is imperative: it lists steps from an assumed starting state, so it is not idempotent, and run against a drifted host it produces a result nobody predicted. Terraform is declarative. It describes the intended end state and computes the difference, so it converges on the same result from any starting point.</p>
-  <p>The governance consequence is at least as valuable as the technical one. A <code>terraform plan</code> executed in a pull request is a reviewable diff of what is about to change in production, before it changes. Infrastructure decisions become peer-reviewed, timestamped and attributable. That is a stronger control than a change-approval meeting, because it is precise, automatic and produces a record without anyone writing one.</p>
+  <p>Nimbus already has automation in <code>deploy.sh</code>. The distinction that matters is that the script is imperative: it lists steps from an assumed starting state, so it is not idempotent, and run against a drifted host it produces a result nobody predicted. Terraform is declarative, describing the intended end state and computing the difference, so it converges on the same result from any starting point.</p>
+  <p>The governance consequence is at least as valuable. A <code>terraform plan</code> in a pull request is a reviewable diff of what is about to change in production, before it changes, so infrastructure decisions become peer-reviewed, timestamped and attributable. That is a stronger control than a change-approval meeting, because it is precise, automatic and produces a record without anyone writing one.</p>
 
   <h3>4.3 Structure, state and environment parity</h3>
-  <p>Terraform is organised as reusable modules for network, service, database and observability, consumed by thin per-environment configurations that differ only in variable values such as instance size and replica count. Staging is therefore not a hand-built approximation of production but the same definition with smaller numbers, which makes parity structural rather than a matter of discipline. State is stored remotely with locking and never on a laptop; it is both the record of what exists and a file containing sensitive values, so it is encrypted, access-controlled and versioned.</p>
+  <p>Terraform is organised as reusable modules for network, service, database and observability, consumed by thin per-environment configurations differing only in variable values such as instance size. Staging is therefore not a hand-built approximation of production but the same definition with smaller numbers, which makes parity structural rather than a matter of discipline. State is stored remotely with locking, never on a laptop; it is both the record of what exists and a file of sensitive values, so it is encrypted, access-controlled and versioned.</p>
 
   <!-- FIGURE:fig3-architecture -->
 
@@ -24,24 +24,24 @@
     <caption>Table 4 — Layered defence against configuration drift</caption>
     <thead><tr><th>Layer</th><th>Control</th><th>Effect</th></tr></thead>
     <tbody>
-      <tr><td>Remove the cause</td><td>No interactive SSH to production; break-glass access is time-boxed, brokered and audited</td><td>Manual edits become impossible rather than discouraged</td></tr>
-      <tr><td>Detect</td><td>A scheduled <code>terraform plan</code> runs daily and alerts on any non-empty diff</td><td>Unmanaged change surfaces within a day</td></tr>
-      <tr><td>Correct</td><td>The pipeline is the only path permitted to apply changes</td><td>Running infrastructure is continuously reconciled to the code</td></tr>
-      <tr><td>Prevent</td><td>Pinned image digests and provider versions; policy checks at merge</td><td>Non-compliant infrastructure cannot enter the repository</td></tr>
+      <tr><td>Remove the cause</td><td>No interactive SSH; break-glass is time-boxed and audited</td><td>Manual edits become impossible, not discouraged</td></tr>
+      <tr><td>Detect</td><td>Scheduled <code>terraform plan</code>, alerting on any diff</td><td>Unmanaged change surfaces within a day</td></tr>
+      <tr><td>Correct</td><td>Only the pipeline may apply changes</td><td>Infrastructure is continuously reconciled to code</td></tr>
+      <tr><td>Prevent</td><td>Pinned digests and versions; policy checks at merge</td><td>Non-compliant infrastructure cannot merge</td></tr>
     </tbody>
   </table>
 
   <h3>4.5 Containers as the unit of deployment</h3>
-  <p>The application is packaged as a container image, and that image is the deployable unit on a developer laptop, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build: dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base image running as an unprivileged user. This buys three things at once. The runtime image is small and therefore quick to pull, it excludes build tooling and source and so presents less attack surface, and because the build is driven by a lockfile and a pinned base digest the same inputs produce the same image. That reproducibility is what makes an artefact safe to promote without retesting it.</p>
+  <p>The application is packaged as a container image, and that image is the deployable unit on a laptop, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build: dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base image running as an unprivileged user. This buys three things at once. The runtime image is small and quick to pull, it excludes build tooling and source and so presents less attack surface, and because the build is driven by a lockfile and a pinned base digest the same inputs produce the same image.</p>
 
   <h3>4.6 Orchestration</h3>
-  <p>Kubernetes would give Nimbus declarative rollouts, self-healing, autoscaling and service discovery, and it is where most industry attention sits. It is still the wrong choice for this team this year.</p>
+  <p>Kubernetes would give Nimbus declarative rollouts, self-healing and autoscaling. It is still the wrong choice for this team this year.</p>
 
   <div class="note">
     <span class="title">Managed container runtime now; Kubernetes when it is earned.</span>
-    <p>Kubernetes is not a single tool but an operational surface: cluster upgrades, networking, ingress, role-based access control, storage classes and a control plane to fund. Operating it competently requires at least one engineer with deep expertise, which would reproduce Nimbus's defining problem, a bus factor of one, at a higher level of abstraction and with worse failure modes. A managed container service provides declarative service definitions, health-based rolling deployments and autoscaling from the same image the pipeline already builds, for a fraction of that operational surface.</p>
+    <p>Kubernetes is not a single tool but an operational surface: cluster upgrades, networking, ingress, access control, storage classes and a control plane to fund. Operating it competently requires an engineer with deep expertise, which would reproduce Nimbus's defining problem, a bus factor of one, at a higher level of abstraction and with worse failure modes. A managed container service provides declarative service definitions, health-based rolling deployments and autoscaling from the same image the pipeline already builds, for a fraction of that surface.</p>
     <p>The decision is time-bound rather than permanent. It is revisited when any of four conditions holds: more than roughly ten services, ownership split across multiple teams, a real requirement for traffic shaping such as canary or a service mesh, or the hire of a dedicated platform engineer. Naming the conditions turns a preference into a decision a successor can evaluate.</p>
   </div>
 
-  <p>Environments follow the artefact. Compose runs it locally, CI runs it in ephemeral containers, and staging and production are built from the same Terraform modules, with per-pull-request preview environments added once the foundations are stable.</p>
+  <p>Environments follow the artefact. Compose runs it locally, CI runs it in ephemeral containers, and staging and production come from the same Terraform modules, with preview environments added once the foundations are stable.</p>
 </section>

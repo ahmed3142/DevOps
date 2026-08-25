@@ -6,7 +6,7 @@
   </div>
 
   <h3>1.1 The organisation</h3>
-  <p>Nimbus Ltd. employs fifteen people, seven of them engineers. Its product, Nimbus Notes, is a subscription knowledge base used by around four hundred small-business teams. It runs on two Amazon EC2 instances configured by hand over SSH at founding and edited in place ever since. A funding round and a doubling of the engineering team are both expected within the year.</p>
+  <p>Nimbus Ltd. employs fifteen people, seven of them engineers. Its product, Nimbus Notes, is a subscription knowledge base used by around four hundred small-business teams. It runs on two Amazon EC2 instances configured by hand over SSH at founding and edited in place ever since. A funding round and a larger engineering team are expected within the year.</p>
   <p>A change reaches customers like this. A ticket is developed on a branch that usually lives two to three weeks. Review is informal and often skipped, testing is a manual regression spreadsheet, and the release happens when Sam, the founding engineer, runs <code>deploy.sh</code> from a laptop.</p>
 
   <h3>1.2 Where the time goes</h3>
@@ -14,28 +14,28 @@
 
   <!-- FIGURE:fig1-value-stream -->
 
-  <p>The distribution matters more than the total. Since queueing rather than effort dominates lead time, adding developers would lengthen the queues instead of shortening them. The limit on delivery is the process, which is what justifies investing in delivery infrastructure before headcount.</p>
+  <p>The distribution matters more than the total. Since queueing rather than effort dominates lead time, adding developers would lengthen the queues instead of shortening them.</p>
 
   <h3>1.3 Waste, handoffs and the knowledge silo</h3>
-  <p>Read through the seven wastes of Lean, the same sequence becomes a diagnosis rather than a list of complaints. Partially done work sits in branches unmerged for weeks. Three handoffs occur per change, from developer to tester to deployer, each losing context that is later rebuilt by conversation. Waiting is the largest category, because every release queues behind one person's availability. Defects escape at one corrective deployment per four releases. Task switching costs twice over, since the engineer interrupted by deployments is the one whose own work then stalls. Relearning happens in every outage, as production knowledge is reconstructed under pressure without runbooks. Over-processing appears as a regression checklist re-executed identically each release.</p>
-  <p>The silo here is not the familiar wall between development and operations, because Nimbus has neither department. It is a knowledge silo: one engineer understands how production is wired, which makes that person the bottleneck, the single point of failure and the only one who cannot take a holiday. The exposure is a bus factor of one, and it appears on no project plan.</p>
+  <p>The seven wastes of Lean turn that sequence into a diagnosis. Partially done work sits in branches unmerged for weeks. Three handoffs occur per change, each losing context later rebuilt by conversation. Waiting is the largest category, because every release queues behind one person's availability. Defects escape at one corrective deployment per four releases. Task switching costs twice over, since the engineer interrupted by deployments is the one whose own work then stalls. Relearning happens in every outage, as production knowledge is reconstructed without runbooks, and over-processing appears as a checklist re-executed identically each release.</p>
+  <p>The silo here is not the familiar wall between development and operations, because Nimbus has neither department. It is a knowledge silo: one engineer understands how production is wired, which makes that person the bottleneck and the single point of failure.</p>
 
   <h3>1.4 Why DevOps, and the limits of CALMS</h3>
-  <p>CALMS describes a mature delivery organisation as five properties: a culture of shared ownership, automation of repetitive error-prone work, lean flow in small batches, measurement of outcomes, and sharing of knowledge. Nimbus scores poorly against all five, and the model earns its place here by explaining why the symptoms are connected rather than coincidental.</p>
+  <p>CALMS describes a mature delivery organisation as five properties: a culture of shared ownership, automation of repetitive work, lean flow in small batches, measurement of outcomes, and sharing of knowledge. Nimbus scores poorly against all five.</p>
   <p>It is a description rather than a plan, and two limits matter. It gives no sequence, so teams start with automation because tooling is the most tangible letter, and automate a process nobody has measured. It is also silent on cost and security, which is why FinOps and DevSecOps were appended to the model rather than derived from it. At Nimbus the entry points are measurement, since improvement that cannot be evidenced cannot be funded, and sharing, since the bus factor is the acute risk.</p>
 
   <h3>1.5 The baseline</h3>
-  <p>The four DORA metrics below were reconstructed from a quarter of Git history, deployment notes and incident messages. Infrastructure cost per tenant is added because the uncontrolled cloud spend in the scenario is a delivery problem expressed financially.</p>
+  <p>The four DORA metrics below were reconstructed from a quarter of Git history, deployment notes and incident messages. Cost per tenant is added because the uncontrolled cloud spend is a delivery problem expressed financially.</p>
 
   <table class="data">
     <caption>Table 1 — Baseline delivery metrics and improvement targets</caption>
     <thead><tr><th>Metric</th><th class="num">Baseline</th><th>DORA band</th><th class="num">6 months</th><th class="num">12 months</th></tr></thead>
     <tbody>
-      <tr><td>Deployment frequency</td><td class="num">2.1 per month</td><td>Low</td><td class="num">2 per week</td><td class="num">Daily</td></tr>
+      <tr><td>Deployment frequency</td><td class="num">2.1 / month</td><td>Low</td><td class="num">2 / week</td><td class="num">Daily</td></tr>
       <tr><td>Lead time for change</td><td class="num">17 days</td><td>Low</td><td class="num">3 days</td><td class="num">Under 1 day</td></tr>
       <tr><td>Change failure rate</td><td class="num">25%</td><td>Low</td><td class="num">15%</td><td class="num">Under 10%</td></tr>
       <tr><td>Mean time to restore</td><td class="num">4h 10m</td><td>Low</td><td class="num">1 hour</td><td class="num">Under 30 min</td></tr>
-      <tr><td>Infrastructure cost per tenant</td><td class="num">€2.14 / month</td><td>—</td><td class="num">€1.70</td><td class="num">€1.40</td></tr>
+      <tr><td>Cost per tenant</td><td class="num">€2.14</td><td>—</td><td class="num">€1.70</td><td class="num">€1.40</td></tr>
     </tbody>
   </table>
 
