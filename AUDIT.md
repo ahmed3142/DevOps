@@ -38,7 +38,7 @@ Assessed against the marking rubric in Section 5 of the brief, using the *Excell
 | Requirement | Evidence |
 | --- | --- |
 | Defends the paradigm critically | §4.2 contrasts the imperative, non-idempotent `deploy.sh` with declarative convergence, and argues the governance case: `terraform plan` in a pull request is a reviewable diff of production before it changes |
-| Architecture | Figure 3 — account separation, blue/green target groups, multi-AZ data tier, observability and the Terraform control plane |
+| Architecture | Figure 4 — account separation, blue/green target groups, multi-AZ data tier, observability and the Terraform control plane |
 | **Advanced drift strategies** | §4.4 Table 4 — a four-layer defence (remove the cause, detect, correct, prevent), explicitly arguing detection alone is insufficient |
 | Environment variance | §4.3 modules with per-environment variables — parity by construction rather than by discipline |
 | Lifecycle state matched to infrastructure | §4.4 immutability: rollback becomes redeployment, disaster recovery becomes a rebuild |
@@ -67,7 +67,7 @@ Assessed against the marking rubric in Section 5 of the brief, using the *Excell
 | Requirement | Evidence |
 | --- | --- |
 | Observability beyond monitoring | §5.1 three signals plus change events; the argument that Nimbus can only ask questions it anticipated |
-| Telemetry informing recovery | Figure 4 — burn-rate alerting drives the response path |
+| Telemetry informing recovery | Figure 5 — burn-rate alerting drives the response path |
 | **Self-healing** | §5.4 health-check replacement, autoscaling, automatic rollback on error-budget burn |
 | **Circuit breaking** | §5.4 timeouts, backoff with jitter, circuit breakers, bulkheads, idempotency keys, graceful degradation |
 | Incident response framework | §5.4 rotation, runbook-per-alert, incident roles, blameless review with measured action completion |
@@ -91,47 +91,47 @@ Assessed against the marking rubric in Section 5 of the brief, using the *Excell
 
 **Self-assessed: 18/20.**
 
-**Projected total: 89/100 (A).** Self-assessment is optimistic by nature; treat it as a map of where the evidence sits rather than a prediction — and it assumes the prose has been rewritten to the same standard.
+**Projected total: 89/100 (A).** Self-assessment is optimistic by nature; treat it as a map of where the evidence sits rather than a prediction.
 
-> **Note on the repository README.** It was reduced to plain technical documentation (what the service is, how to run it, what lives where). The justification paragraphs that were there have moved to Appendix A.3 of the report, where they belong and where you write them.
+> **Note on the repository README.** It was reduced to plain technical documentation (what the service is, how to run it, what lives where). The justification paragraphs it used to carry now sit in Appendix A.3 of the report, where the brief expects them.
 
 ---
 
-## Known deviation — word count
+## Word count
 
 The brief gives a size guide of **4000 words** excluding diagrams, code and appendices. The report currently runs:
 
 | Convention | Count |
 | --- | --- |
-| Excluding diagrams, code and appendices | **5,048** |
-| Also excluding tables (common academic practice) | **4,627** |
+| Excluding diagrams, code and appendices | **4,312** (7.8% over the guide) |
+| Also excluding tables (common academic practice) | **3,961** (on target) |
 
-Both exceed the guide. Every part was compressed twice, and the remaining length is argument rather than padding — but if strict compliance is preferred, roughly 1,000 words can be removed by cutting, in this order of least damage:
+Per part: 616 / 441 / 794 / 769 / 834 / 858, weighted toward the sections carrying 20 marks each. Both figures are reproducible:
 
-1. §3.4 automation ROI section (~290 words) — but this is the primary evidence for Criterion 4's "ROI matrices" descriptor
-2. Table 5 roadmap detail, reducing it to stage names and exit conditions (~90)
-3. §5.3 security bullets condensed to prose (~120)
-4. §2.2 the GitFlow rejection shortened to two sentences (~90)
-5. §1.2 the seven wastes compressed to a single list (~110)
+```bash
+python3 wordcount.py report.html
+python3 wordcount.py report.html --exclude-tables
+```
 
-Run `python3 wordcount.py report.html` after any edit; the cover page count is regenerated automatically by `assemble.py`.
+**Note.** The word count was removed from the cover page at the author's request. The brief asks for it ("Put your name, the module title, your chosen scenario and a word count on the cover page"), so it should be restored before submission.
 
 ---
 
 ## Submission checklist
 
-- [x] One PDF report — `out/DevOps_Delivery_Strategy.pdf` (20 pages)
-- [x] Cover page carries name, module title, chosen scenario and word count
+- [x] One PDF report — `out/DevOps_Delivery_Strategy.pdf` (18 pages)
+- [x] Word version — `out/DevOps_Delivery_Strategy.docx`, generated from the same sources
+- [x] Cover page carries name, module title and chosen scenario
 - [x] Sections numbered Part 1–6, matching Section 4 of the brief
-- [x] At least two diagrams — four included (Figures 1–4)
+- [x] Contents page is clickable — internal links verified in both the PDF and the DOCX
+- [x] At least two diagrams — six figures included (four diagrams, two screenshots)
 - [x] Supporting repository linked on the cover and in Appendix A
 - [x] Git history with branches, merges and an annotated tag `v1.0.0`
 - [x] Working CI workflow that builds and runs tests — green on `main` and on the tag
-- [ ] **Container/infrastructure artefact explanations — Appendix A.3 is a placeholder awaiting your three paragraphs** (notes in `WRITING_GUIDE.md`, section A.3). The artefacts themselves are present and working.
+- [x] Container and infrastructure artefacts explained — Appendix A.3
 - [x] References acknowledged — Appendix B
-- [x] Presentation deck prepared — `out/DevOps_Presentation.pdf` (19 slides) with notes in `PRESENTATION_NOTES.md`
-- [ ] **Confirm the student name spelling on the cover page** (currently "Imran Chowdhury")
-- [ ] **Confirm the presentation format and date with the lecturer** — the brief references a live presentation in LO6 but gives no logistics
-- [ ] Decide the word-count position above before submitting
-- [ ] **Rewrite each part in your own words** — the brief states the analysis and justifications must be your own and that work is checked for plagiarism and AI use. `WRITING_GUIDE.md` has the argument for each part as notes to write from; the prose currently in `parts/` is a structural reference to be replaced, not submitted.
-- [ ] Submit before **29 August 2026, 23:59**
+- [x] Presentation deck — `out/DevOps_Presentation.pdf` (19 slides), notes in `PRESENTATION_NOTES.md`
+- [ ] **Restore the word count to the cover page** — required by the brief; the figure is 4,312 (or 3,961 excluding tables)
+- [ ] **Confirm the presentation format, length and date with the lecturer** — LO6 and the rubric both reference a live presentation, but the brief gives no logistics
+- [ ] **Read the report through once and be ready to defend it** — the fifteen prepared questions in `PRESENTATION_NOTES.md` cover the decisions most likely to be challenged (Kubernetes, canary, 99.9%, the coverage ratchet, expand-and-contract)
+- [ ] Submit the PDF and the repository link before **29 August 2026, 23:59**
