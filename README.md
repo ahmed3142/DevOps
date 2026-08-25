@@ -6,6 +6,7 @@ Source for the written report (Deliverable 1) and presentation (Deliverable 3) o
 
 ```bash
 ./build.sh          # assembles and renders out/DevOps_Delivery_Strategy.pdf
+./build-docx.sh     # renders out/DevOps_Delivery_Strategy.docx (Word)
 ./build-slides.sh   # renders out/DevOps_Presentation.pdf (19 slides, 16:9)
 python3 wordcount.py report.html                    # assessed word count, per part
 python3 wordcount.py report.html --exclude-tables   # count with tables excluded too
@@ -23,7 +24,10 @@ Both scripts render through Playwright's Chromium so the report carries a page-n
 | `figures/*.html` | Inline SVG figures with captions, referenced by `<!-- FIGURE:name -->` markers |
 | `slides-src.html` | Presentation deck source; reuses the same figure fragments |
 | `styles.css` / `slides.css` | Print stylesheets for the report and the deck |
-| `assemble.py` | Builds `report.html` and `slides.html`, and stamps the live word count onto the cover |
+| `assemble.py` | Builds `report.html` and `slides.html` from the sources |
+| `build_docx.py` | Builds the Word version from the same HTML, embedding rasterised figures |
+| `raster.mjs` / `shot.mjs` | Rasterise the SVG figures and capture the application and pipeline screenshots |
+| `shots/` | Screenshots and rasterised figures used by both output formats |
 | `WRITING_GUIDE.md` | The argument for each part as notes to write the prose from |
 | `AUDIT.md` | Rubric self-audit, known deviations and the submission checklist |
 | `PRESENTATION_NOTES.md` | Speaker notes per slide and fifteen prepared defence answers |

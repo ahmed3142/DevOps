@@ -9,45 +9,57 @@
 
 <!-- ============================ COVER ============================ -->
 <div class="cover no-count">
-  <div class="institute">Learnkey Institute &nbsp;•&nbsp; Malta Campus</div>
-  <div class="award">Award in Introduction to DevOps: Principles and Practices &nbsp;·&nbsp; MQF/EQF Level 5</div>
+  <div class="top">
+    <div class="institute">Learnkey Institute &nbsp;·&nbsp; Malta Campus</div>
+    <div class="award">Award in Introduction to DevOps: Principles and Practices &nbsp;·&nbsp; 10 ECTS &nbsp;·&nbsp; MQF/EQF Level 5</div>
+  </div>
 
-  <h1>Design, Justify and Present a DevOps Delivery Strategy</h1>
-  <div class="subtitle">Scenario B — The Growing SaaS Start-up Outgrowing Its Scripts</div>
-  <div class="rule"></div>
+  <div class="mid">
+    <div class="scenario">Scenario B — The Growing SaaS Start-up Outgrowing Its Scripts</div>
+    <h1>A DevOps Delivery Strategy for Nimbus Ltd.</h1>
+    <p class="abstract">
+      Nimbus is a fifteen-person start-up whose delivery process has not grown with it. Releases take seventeen days,
+      one engineer holds all production knowledge, environments drift, and the cloud bill has no owner. This report
+      analyses that delivery system, sets a measurement baseline, and designs an end-to-end strategy covering version
+      control, continuous delivery, infrastructure as code, observability, security, cost and the twelve-month plan to
+      adopt it.
+    </p>
+  </div>
 
-  <table>
-    <tr><td>Student</td><td>Imran Chowdhury Neta</td></tr>
-    <tr><td>Module</td><td>Introduction to DevOps: Principles and Practices (10 ECTS)</td></tr>
-    <tr><td>Assessment</td><td>Individual Project-Based Assessment (100% of module mark)</td></tr>
-    <tr><td>Scenario</td><td>B — The Growing SaaS Start-up Outgrowing Its Scripts</td></tr>
-    <tr><td>Organisation</td><td>Nimbus Ltd. — &ldquo;Nimbus Notes&rdquo; B2B SaaS</td></tr>
-    <tr><td>Word count</td><td>WORDCOUNT_PLACEHOLDER words (excluding diagrams, code and appendices)</td></tr>
-    <tr><td>Supporting repository</td><td>github.com/imranneta5555/DevOps</td></tr>
-    <tr><td>Submission date</td><td>29 August 2026</td></tr>
-  </table>
+  <div class="foot">
+    <table>
+      <tr><td>Author</td><td>Imran Chowdhury</td></tr>
+      <tr><td>Assessment</td><td>Individual Project-Based Assessment (100% of module mark)</td></tr>
+      <tr><td>Supporting repository</td><td>github.com/imranneta5555/DevOps</td></tr>
+      <tr><td>Date</td><td>29 August 2026</td></tr>
+    </table>
+  </div>
 </div>
 
 <!-- ============================ CONTENTS ============================ -->
 <div class="toc no-count">
   <h2>Contents</h2>
   <ol>
-    <li><span class="n">Part 1</span><span class="t">Current-State Analysis &amp; the Case for DevOps</span>
-      <span class="d">Value-stream analysis, the seven wastes, a critique of CALMS, and the baseline metrics that make improvement provable.</span></li>
-    <li><span class="n">Part 2</span><span class="t">Version Control &amp; Collaborative Workflow</span>
-      <span class="d">Trunk-based development on a protected trunk, review as knowledge transfer, and an unbroken traceability chain from ticket to running version.</span></li>
-    <li><span class="n">Part 3</span><span class="t">CI/CD Pipeline &amp; Quality Strategy</span>
-      <span class="d">Build once and deploy many, a costed test pyramid, quality gates with real thresholds, and blue-green release with a rehearsed rollback.</span></li>
-    <li><span class="n">Part 4</span><span class="t">Environments, Infrastructure &amp; Containers</span>
-      <span class="d">Infrastructure as code, immutable servers, a four-layer defence against drift, and the case for <em>not</em> adopting Kubernetes yet.</span></li>
-    <li><span class="n">Part 5</span><span class="t">Observability, Security &amp; Reliability</span>
-      <span class="d">Service level objectives and error budgets, shifted-left security, incident response, and disaster recovery that has actually been tested.</span></li>
-    <li><span class="n">Part 6</span><span class="t">Cloud, Cost &amp; Leading the Change</span>
-      <span class="d">FinOps and unit economics, the human work of leading the change, a five-stage adoption roadmap, and how success is measured over time.</span></li>
+    <li><a href="#part1"><span class="n">1</span><span class="t">Current State and the Case for Change</span>
+      <span class="d">Value-stream analysis, waste and handoffs, a critique of CALMS, and the baseline metrics.</span></a></li>
+    <li><a href="#part2"><span class="n">2</span><span class="t">Version Control and Collaborative Workflow</span>
+      <span class="d">Branching strategy, review as knowledge transfer, release tagging and traceability.</span></a></li>
+    <li><a href="#part3"><span class="n">3</span><span class="t">Continuous Delivery and Quality</span>
+      <span class="d">Pipeline design, the test portfolio, quality gates, automation priorities, release and rollback.</span></a></li>
+    <li><a href="#part4"><span class="n">4</span><span class="t">Environments, Infrastructure and Containers</span>
+      <span class="d">Infrastructure as code, immutability, defence against drift, and the orchestration decision.</span></a></li>
+    <li><a href="#part5"><span class="n">5</span><span class="t">Observability, Security and Reliability</span>
+      <span class="d">Telemetry, service level objectives and error budgets, shifted-left security, incident response and recovery.</span></a></li>
+    <li><a href="#part6"><span class="n">6</span><span class="t">Cloud, Cost and Leading the Change</span>
+      <span class="d">Cloud environment management, FinOps, the adoption roadmap and how success is measured.</span></a></li>
+    <li><a href="#appendix"><span class="n">A</span><span class="t">Appendices</span>
+      <span class="d">A — supporting artefacts and how to verify them. B — references.</span></a></li>
   </ol>
-  <p style="font-size:9pt;color:#55606e;font-style:italic;margin-top:14pt;">
-    Appendix A lists the supporting artefacts (Git history, CI workflow, Dockerfile, Compose file and Terraform snippet) held in the accompanying repository. Appendix B lists references.
-  </p>
+
+  <div class="lists">
+    <p><strong>Figures.</strong> 1 Current-state value stream · 2 Target delivery pipeline · 3 A pipeline run · 4 Target environment architecture · 5 Error-budget policy and incident flow · 6 The service the artefacts deploy</p>
+    <p><strong>Tables.</strong> 1 Baseline metrics and targets · 2 Test portfolio · 3 Automation return on investment · 4 Defence against drift · 5 Adoption roadmap</p>
+  </div>
 </div>
 
 <!-- ============================ PARTS ============================ -->

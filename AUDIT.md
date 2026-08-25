@@ -130,7 +130,7 @@ Run `python3 wordcount.py report.html` after any edit; the cover page count is r
 - [ ] **Container/infrastructure artefact explanations — Appendix A.3 is a placeholder awaiting your three paragraphs** (notes in `WRITING_GUIDE.md`, section A.3). The artefacts themselves are present and working.
 - [x] References acknowledged — Appendix B
 - [x] Presentation deck prepared — `out/DevOps_Presentation.pdf` (19 slides) with notes in `PRESENTATION_NOTES.md`
-- [ ] **Confirm the student name spelling on the cover page** (currently "Imran Chowdhury Neta")
+- [ ] **Confirm the student name spelling on the cover page** (currently "Imran Chowdhury")
 - [ ] **Confirm the presentation format and date with the lecturer** — the brief references a live presentation in LO6 but gives no logistics
 - [ ] Decide the word-count position above before submitting
 - [ ] **Rewrite each part in your own words** — the brief states the analysis and justifications must be your own and that work is checked for plagiarism and AI use. `WRITING_GUIDE.md` has the argument for each part as notes to write from; the prose currently in `parts/` is a structural reference to be replaced, not submitted.

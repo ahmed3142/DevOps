@@ -1,24 +1,26 @@
-<section class="part" data-part="Part 2 — Version Control &amp; Workflow">
-  <div class="partlabel">Part 2</div>
-  <h2>Version Control and Collaborative Workflow</h2>
-  <p class="lead">Lecture 2 — branching strategy, code review, and traceability from ticket to running version.</p>
-
-  <h3>2.1 The chosen strategy</h3>
-  <p>Nimbus will adopt <strong>trunk-based development with short-lived branches</strong>. Every change is cut from <code>main</code>, lives on a branch for no more than two days, and returns through a pull request requiring a passing pipeline and one approving review. <code>main</code> is protected: no direct pushes, no force-pushes, no merge without a green build. The supporting repository demonstrates this workflow, with four feature branches merged into a protected trunk and released as an annotated tag.</p>
-
-  <h3>2.2 Why not the alternatives</h3>
-  <p>GitFlow is the obvious incumbent choice and the wrong one here. Its <code>develop</code>, <code>release</code> and <code>hotfix</code> branches earn their keep when a vendor ships versioned software to customers who choose when to upgrade. Nimbus runs one shared production instance, so those branches buy no isolation while formalising the very long-lived-branch behaviour that produces its seventeen-day lead time — institutionalising the disease as a process.</p>
-  <p>Committing directly to trunk without review — the purest form of trunk-based development — is equally unsuitable, for a cultural rather than technical reason. Nimbus's central risk is that one engineer holds all production knowledge, and a pull request is the cheapest knowledge-transfer mechanism available: it forces a second person to read every change and records why it was made. Review here is not a gate bolted on out of distrust; it is deliberate redundancy in the team's understanding.</p>
-
-  <div class="decision">
-    <span class="title">Design decision — batch size is the real lever</span>
-    <p>The branching model matters mainly because it caps batch size. Twelve small merges a week carry less risk than one large merge a month: each contains fewer changes, is easier to review honestly, is faster to diagnose when it fails, and is trivial to revert. Small batches improve lead time and change-failure rate simultaneously — which is why those metrics move together rather than trade off.</p>
+<section class="part" id="part2" data-part="2 — Version Control">
+  <div class="parthead">
+    <span class="label">Part Two</span>
+    <h2>Version Control and Collaborative Workflow</h2>
+    <p class="lead">Branching strategy, review as knowledge transfer, release tagging and traceability.</p>
   </div>
 
-  <h3>2.3 Conventions, protection and release tagging</h3>
-  <p>Commits follow the Conventional Commits specification — valuable not for tidiness but for machine readability, since a structured history lets changelogs and version numbers be generated rather than negotiated. Merge commits are retained deliberately: a merge groups a feature's commits into one revertible unit, whereas squashing discards the steps that make a bisect meaningful. Releases are annotated semantic-version tags on <code>main</code>, so a version number identifies one commit, one image and one set of passing tests.</p>
+  <h3>2.1 The chosen workflow</h3>
+  <p>Nimbus adopts trunk-based development with short-lived branches. Every change is cut from <code>main</code>, lives on a branch for no more than two days, and returns through a pull request that requires a passing pipeline and one approving review. The trunk is protected: no direct pushes, no force-pushes, and no merge while the build is red. The supporting repository demonstrates this shape, with four feature branches merged into a protected trunk and released as an annotated tag.</p>
+
+  <h3>2.2 Alternatives considered</h3>
+  <p>GitFlow is the obvious incumbent and the wrong fit here. Its <code>develop</code>, <code>release</code> and <code>hotfix</code> branches earn their keep when a vendor ships versioned software to customers who decide when to upgrade. Nimbus runs one production instance shared by every customer, so those branches provide no isolation while formalising the long-lived-branch behaviour that already produces a seventeen-day lead time.</p>
+  <p>Committing directly to the trunk without review, the purest form of trunk-based development, is rejected for a different reason. Nimbus's defining risk is that one engineer holds all production knowledge. A pull request is the cheapest knowledge-transfer mechanism available: it obliges a second person to read every change and it records why the change was made. Review here is redundancy in the team's understanding rather than a check on trust.</p>
+
+  <div class="note">
+    <span class="title">Batch size is the mechanism.</span>
+    <p>The branching model matters mainly because it caps how much changes at once. Twelve small merges a week carry less risk than one large merge a month: each contains fewer changes, is easier to review honestly, is faster to diagnose when it fails and is simple to revert. This is why lead time and change failure rate tend to improve together rather than trade against each other.</p>
+  </div>
+
+  <h3>2.3 Conventions and releases</h3>
+  <p>Commits follow the Conventional Commits specification. The benefit is machine readability rather than tidiness: a structured history lets changelogs and version numbers be generated instead of negotiated. Merge commits are kept deliberately, because a merge groups a feature's commits into one revertible unit, while squashing discards the intermediate steps that make a bisect useful. Releases are annotated semantic-version tags on the trunk, so a version number identifies one commit, one image and one set of passing tests.</p>
 
   <h3>2.4 Traceability</h3>
-  <p>An unbroken chain connects a business request to a running process. The ticket identifier appears in the branch name, carries into the commit messages, is referenced by the pull request recording review and approval, is captured by the release tag, is baked into the image digest, and is finally reported by the service itself — the <code>/api/health</code> endpoint in the supporting repository returns the version it is executing. Any environment can therefore be traced to the commit that produced it without asking anyone.</p>
-  <p>That chain turns version control from a backup mechanism into the organisation's audit trail: it answers what changed, when and who approved it in seconds rather than through forensic archaeology across Slack history, and at no extra cost produces the evidence a security questionnaire will later demand.</p>
+  <p>An unbroken chain connects a business request to a running process. The ticket identifier appears in the branch name, carries into the commit messages, is referenced by the pull request that records the review, is captured by the release tag, is baked into the image digest built from that tag, and is finally reported by the service itself: the <code>/api/health</code> endpoint returns the version it is executing, as shown in Figure 6. Any environment can therefore be traced to the commit that produced it without asking anyone.</p>
+  <p>That chain also serves as the audit trail. It answers what changed, when and who approved it in seconds rather than through a search of chat history, and it produces the evidence a security questionnaire will later require at no additional cost.</p>
 </section>

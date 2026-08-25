@@ -1,59 +1,63 @@
-<section class="part" data-part="Part 3 — CI/CD Pipeline &amp; Quality">
-  <div class="partlabel">Part 3</div>
-  <h2>CI/CD Pipeline and Quality Strategy</h2>
-  <p class="lead">Lectures 4, 5 and 6 — continuous integration, automated testing, and release strategy with rollback.</p>
+<section class="part" id="part3" data-part="3 — Continuous Delivery">
+  <div class="parthead">
+    <span class="label">Part Three</span>
+    <h2>Continuous Delivery and Quality</h2>
+    <p class="lead">Pipeline design, the test portfolio, quality gates, automation priorities, release and rollback.</p>
+  </div>
 
-  <h3>3.1 Pipeline shape</h3>
-  <p>Figure 2 sets out the target pipeline. A push triggers static analysis, unit tests and a production build; a container image is then built once and tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is only then promoted to production — the identical artefact, nothing rebuilt per environment.</p>
+  <h3>3.1 Pipeline design</h3>
+  <p>Figure 2 sets out the target pipeline. A push runs static analysis, unit tests and a production build, then builds a container image tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is promoted to production unchanged.</p>
+
   <!-- FIGURE:fig2-pipeline -->
 
-  <p><strong>Build once, deploy many</strong> is the most important property of the design. If each environment compiles its own artefact, the thing tested in staging is not the thing running in production, and the team argues about a difference nobody can reproduce — Nimbus's most common failure mode. The supporting repository implements the first half of this pipeline today: every push runs lint, tests and a production build, and a dependent job builds the image from the same commit.</p>
+  <p>Building once and deploying many times is the most important property of the design. When each environment compiles its own artefact, the version tested in staging is not the version running in production, which is the source of the environment differences in the scenario. The supporting repository implements the first half of this pipeline today, as Figure 3 shows.</p>
 
-  <h3>3.2 Automated testing</h3>
-  <p>Testing is organised as a pyramid, costed by execution time because feedback speed is what is being bought.</p>
+  <!-- FIGURE:fig3-ci-run -->
+
+  <h3>3.2 Test portfolio</h3>
+  <p>Tests are organised as a pyramid and budgeted in execution time, because feedback speed is what the portfolio is bought for.</p>
   <table class="data">
     <caption>Table 2 — Target test portfolio</caption>
-    <thead><tr><th>Layer</th><th>Scope</th><th>Volume</th><th>Budget</th><th>Runs</th></tr></thead>
+    <thead><tr><th>Layer</th><th>Scope</th><th class="num">Volume</th><th class="num">Budget</th><th>Runs</th></tr></thead>
     <tbody>
-      <tr><td>Unit</td><td>Pure logic, validation, permissions</td><td class="num">~1,200</td><td class="num">&lt; 2 min</td><td>Every push</td></tr>
-      <tr><td>Integration</td><td>API against a real database in a container</td><td class="num">~150</td><td class="num">&lt; 5 min</td><td>Every push</td></tr>
-      <tr><td>End-to-end</td><td>Critical journeys: sign-up, note CRUD, sharing, billing</td><td class="num">~10</td><td class="num">&lt; 6 min</td><td>Post-deploy to staging</td></tr>
+      <tr><td>Unit</td><td>Logic, validation, permissions</td><td class="num">~1,200</td><td class="num">2 min</td><td>Every push</td></tr>
+      <tr><td>Integration</td><td>API against a real database in a container</td><td class="num">~150</td><td class="num">5 min</td><td>Every push</td></tr>
+      <tr><td>End-to-end</td><td>Sign-up, note CRUD, sharing, billing</td><td class="num">~10</td><td class="num">6 min</td><td>After staging deploy</td></tr>
     </tbody>
   </table>
-  <p>Nimbus will be tempted into the inverted pyramid — the "ice-cream cone" — because it has no unit tests and browser tests appear to cover more ground each. But end-to-end tests are slow, fragile and poor at locating failures: a red browser test says checkout is broken, a red unit test says which function returns the wrong value. A suite dominated by them becomes flaky, and a flaky suite teaches engineers to re-run failures rather than read them.</p>
+  <p>Nimbus will be tempted into the inverted pyramid, because it has no unit tests and browser tests appear to cover more ground each. But end-to-end tests are slow, fragile and poor at locating faults: a failing browser test reports that checkout is broken, while a failing unit test names the function. A suite dominated by them becomes flaky, and a flaky suite teaches engineers to re-run failures instead of reading them.</p>
 
   <h3>3.3 Quality gates</h3>
   <p>Each gate has a defined threshold and consequence, so quality is enforced by the pipeline rather than negotiated in a meeting.</p>
   <ul>
-    <li><strong>Lint and type checking</strong> — any error fails the build.</li>
-    <li><strong>Unit and integration tests</strong> — all must pass; coverage is governed by a <em>ratchet</em> forbidding a decrease rather than a fixed percentage, because a fixed target such as eighty per cent invites tests written to satisfy the number rather than the risk.</li>
-    <li><strong>Dependency and container scanning</strong> — critical or high severity findings with an available fix block the merge; lower severities open a tracked issue.</li>
-    <li><strong>Pipeline duration</strong> — a hard ten-minute budget from push to feedback; exceeding it is logged as a platform defect, because a slow pipeline gets routed around, and a gate that is routed around is not a gate.</li>
+    <li>Lint and type checking: any error fails the build.</li>
+    <li>Unit and integration tests: all must pass. Coverage is governed by a ratchet that forbids a decrease, rather than a fixed percentage, because a fixed target invites tests written to satisfy the number instead of the risk.</li>
+    <li>Dependency and container scanning: critical or high findings with an available fix block the merge; lower severities open a tracked issue.</li>
+    <li>Pipeline duration: a ten-minute budget from push to feedback. Exceeding it is recorded as a platform defect, since a slow pipeline gets worked around and a gate that is worked around is not a gate.</li>
   </ul>
 
-  <h3>3.4 Choosing what to automate first</h3>
-  <p>Automation competes for the same engineering hours as features, so candidates are scored rather than chosen by enthusiasm: annual hours returned, weighed against build effort and the error rate the manual version carries.</p>
+  <h3>3.4 What to automate first</h3>
+  <p>Automation competes for the same hours as product work, so candidates are scored rather than chosen by enthusiasm.</p>
   <table class="data">
     <caption>Table 3 — Automation return on investment, first year</caption>
-    <thead><tr><th>Candidate</th><th>Frequency</th><th>Manual cost</th><th>Build effort</th><th>Verdict</th></tr></thead>
+    <thead><tr><th>Candidate</th><th class="num">Frequency</th><th>Cost if manual</th><th class="num">Build effort</th><th>Decision</th></tr></thead>
     <tbody>
-      <tr><td>Test and build on every push</td><td class="num">~40 / week</td><td class="num">~90 h/yr + escaped defects</td><td class="num">3 days</td><td>Do first</td></tr>
-      <tr><td>Environment provisioning in code</td><td class="num">~1 / month</td><td class="num">~60 h/yr + drift</td><td class="num">15 days</td><td>Do — drift is the real return</td></tr>
-      <tr><td>Deployment and rollback</td><td class="num">~2 / month</td><td class="num">~50 h/yr + outage risk</td><td class="num">8 days</td><td>Do</td></tr>
-      <tr><td>Non-production shutdown</td><td class="num">nightly</td><td class="num">€0 time, ~€6k/yr spend</td><td class="num">1 day</td><td>Do — pays back in weeks</td></tr>
-      <tr><td>Fully automated production approval</td><td class="num">~2 / month</td><td class="num">~4 h/yr</td><td class="num">6 days</td><td>Defer until failure rate falls</td></tr>
+      <tr><td>Test and build on every push</td><td class="num">~40 / week</td><td>90 h/yr plus escaped defects</td><td class="num">3 days</td><td>First</td></tr>
+      <tr><td>Environment provisioning in code</td><td class="num">~1 / month</td><td>60 h/yr plus drift</td><td class="num">15 days</td><td>Yes; drift is the real return</td></tr>
+      <tr><td>Deployment and rollback</td><td class="num">~2 / month</td><td>50 h/yr plus outage risk</td><td class="num">8 days</td><td>Yes</td></tr>
+      <tr><td>Non-production shutdown out of hours</td><td class="num">Nightly</td><td>€6,000/yr of idle spend</td><td class="num">1 day</td><td>Yes; pays back in weeks</td></tr>
+      <tr><td>Removing the production approval gate</td><td class="num">~2 / month</td><td>4 h/yr</td><td class="num">6 days</td><td>Defer</td></tr>
     </tbody>
   </table>
-  <p>The table also explains a refusal: automating the production approval gate saves almost nothing while the change-failure rate is twenty-five per cent, and it becomes worth removing only once the earlier automation has made releases boring. Two candidates are staged for later, once enough telemetry exists to drive them — machine-assisted test selection, running only the tests a change can plausibly break, and anomaly detection over metrics and logs, which is how a cloud-native estate with more signals than humans keeps alert volume tractable. Both are data-hungry, and applying them to a system with no baseline would automate guesswork.</p>
+  <p>The last row is the useful one. Automating the production approval gate saves almost nothing while a quarter of changes fail, and the human pause costs less than the incidents it prevents; it becomes worth removing once earlier work has made releases unremarkable. Two candidates are staged until there is telemetry to drive them: machine-assisted test selection, running only the tests a change can plausibly break, and anomaly detection across metrics and logs, which is how a cloud-native estate with more signals than engineers keeps alert volume manageable. Both need a baseline, and without one they would automate guesswork.</p>
 
-  <h3>3.5 Release strategy and rollback</h3>
-  <p>Production releases use <strong>blue-green deployment</strong>. Two identical environments sit behind a load balancer; the new version is deployed to the idle one, smoke-tested against real infrastructure with no customer traffic, then made live by shifting the balancer. The previous environment stays warm for thirty minutes, so rollback is a traffic shift measured in seconds rather than a redeployment measured in hours. The cost is roughly double compute during the window — a few euro for a stateless tier, far cheaper than an hour of outage.</p>
+  <h3>3.5 Release and rollback</h3>
+  <p>Production releases use blue-green deployment. Two identical environments sit behind a load balancer. The new version is deployed to the idle one, smoke-tested against real infrastructure with no customer traffic, then made live by shifting the balancer. The previous environment stays warm for thirty minutes, so rollback is a traffic shift measured in seconds rather than a redeployment measured in hours. The cost is roughly double compute during the release window, a few euro for a stateless tier, against an hour of outage.</p>
 
-  <div class="decision">
-    <span class="title">Design decision — why not canary</span>
-    <p>Canary releasing is the more sophisticated option and is deliberately deferred. It requires weighted traffic routing, per-cohort metrics and enough request volume to reach a statistically meaningful judgement quickly; at Nimbus's traffic a one per cent canary would take days to produce a trustworthy signal. More fundamentally, a canary is only as good as the observability used to evaluate it, and that observability does not yet exist — a canary without it is simply a slower outage. Canary becomes the right answer once the objectives in Part 5 are in place and traffic has grown. This is a sequencing decision, not a rejection.</p>
+  <div class="note">
+    <span class="title">Canary is deferred, not rejected.</span>
+    <p>Canary releasing requires weighted traffic routing, per-cohort metrics and enough request volume to reach a trustworthy judgement quickly. At Nimbus's traffic a one per cent canary would take days to produce a usable signal. A canary is also only as good as the observability used to evaluate it, and that observability does not yet exist, so today it would amount to a slower outage. Canary becomes the right choice once the objectives in Part 5 are running and traffic has grown.</p>
   </div>
 
-  <p>Blue-green protects the application tier but not the database, which leads to the practice that actually makes rollback possible. <strong>Expand-and-contract migrations</strong> split schema changes across releases: first an additive change both old and new code tolerate, then the code that uses it, then a backfill, and only in a later release the removal of the old column. Without this discipline every rollback plan is fiction, because code reverts in seconds and a destructive migration cannot be reverted at all.</p>
-  <p><strong>Feature flags</strong> decouple deployment from release, so incomplete work ships while invisible to customers — permitting small batches and providing a second, instantaneous rollback needing no deployment. Rollback itself is rehearsed monthly in staging: an untested rollback is a hope rather than a plan.</p>
+  <p>Blue-green protects the application tier but not the database, which leads to the practice that makes rollback genuine. Expand-and-contract migrations split a schema change across releases: an additive change both old and new code tolerate, then the code that uses it, then a backfill, and only later the removal of the old column. Without this, rollback plans are fiction, because code reverts in seconds and a destructive migration does not revert at all. Feature flags decouple deployment from release, keeping batches small and providing a second rollback path that needs no deployment. Rollback is rehearsed monthly in staging, since an untested rollback is an assumption rather than a plan.</p>
 </section>
