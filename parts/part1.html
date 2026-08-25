@@ -6,18 +6,18 @@
   </div>
 
   <h3>1.1 The organisation</h3>
-  <p>Nimbus Ltd. employs fifteen people, seven of them engineers. Its product, Nimbus Notes, is a subscription knowledge base used by around four hundred small-business teams. It runs on two Amazon EC2 instances configured by hand over SSH at founding and edited in place ever since. A funding round and a larger engineering team are expected within the year.</p>
-  <p>A change reaches customers like this. A ticket is developed on a branch that usually lives two to three weeks. Review is informal and often skipped, testing is a manual regression spreadsheet, and the release happens when Sam, the founding engineer, runs <code>deploy.sh</code> from a laptop.</p>
+  <p>Nimbus Ltd. employs fifteen people, seven of them engineers. Its product, Nimbus Notes, is a subscription knowledge base used by about four hundred small-business teams. It runs on two Amazon EC2 instances configured by hand over SSH at founding and edited in place ever since. A funding round and a larger engineering team are expected within the year.</p>
+  <p>A ticket is developed on a branch that usually lives two to three weeks. Review is informal and often skipped, testing is a manual regression spreadsheet, and the release happens when Sam, the founding engineer, runs <code>deploy.sh</code> from a laptop.</p>
 
   <h3>1.2 Where the time goes</h3>
   <p>Figure 1 maps that sequence with process time and waiting time separated. The total is seventeen days, of which two and a half involve anyone working on the change, giving a flow efficiency of about fifteen per cent.</p>
 
   <!-- FIGURE:fig1-value-stream -->
 
-  <p>The distribution matters more than the total. Since queueing rather than effort dominates lead time, adding developers would lengthen the queues instead of shortening them.</p>
+  <p>The distribution matters more than the total: since queueing rather than effort dominates lead time, adding developers would lengthen the queues instead of shortening them.</p>
 
   <h3>1.3 Waste, handoffs and the knowledge silo</h3>
-  <p>The seven wastes of Lean turn that sequence into a diagnosis. Partially done work sits in branches unmerged for weeks. Three handoffs occur per change, each losing context later rebuilt by conversation. Waiting is the largest category, because every release queues behind one person's availability. Defects escape at one corrective deployment per four releases. Task switching costs twice over, since the engineer interrupted by deployments is the one whose own work then stalls. Relearning happens in every outage, as production knowledge is reconstructed without runbooks, and over-processing appears as a checklist re-executed identically each release.</p>
+  <p>The seven wastes of Lean turn that sequence into a diagnosis. Partially done work sits in branches unmerged for weeks. Three handoffs occur per change, each losing context later rebuilt by conversation. Waiting is the largest category, since every release queues behind one person's availability. Defects escape at one corrective deployment per four releases. Task switching costs twice over, since the engineer interrupted by deployments is the one whose work then stalls. Relearning happens in every outage, as production knowledge is reconstructed without runbooks, and over-processing appears as a checklist re-run identically each release.</p>
   <p>The silo here is not the familiar wall between development and operations, because Nimbus has neither department. It is a knowledge silo: one engineer understands how production is wired, which makes that person the bottleneck and the single point of failure.</p>
 
   <h3>1.4 Why DevOps, and the limits of CALMS</h3>
@@ -39,5 +39,5 @@
     </tbody>
   </table>
 
-  <p>All four delivery figures fall in DORA's lowest band, while its highest performers deploy on demand and restore in under an hour. The gap has commercial weight: technical due diligence asks how often a company ships and how fast it recovers, and enterprise buyers ask the same before signing.</p>
+  <p>All four figures fall in DORA's lowest band, while its highest performers deploy on demand and restore within an hour. The gap has commercial weight: technical due diligence and enterprise buyers both ask how often a company ships and how fast it recovers.</p>
 </section>

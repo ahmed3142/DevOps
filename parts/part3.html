@@ -6,11 +6,11 @@
   </div>
 
   <h3>3.1 Pipeline design</h3>
-  <p>Figure 2 sets out the target pipeline. A push runs static analysis, unit tests and a production build, then builds a container image tagged with the commit SHA. That image deploys automatically to staging, is exercised by integration and smoke tests, and is promoted to production unchanged.</p>
+  <p>Figure 2 sets out the target pipeline. A push runs static analysis, unit tests and a production build, then builds a container image tagged with the commit SHA. That image deploys to staging, is exercised by integration and smoke tests, and is promoted to production unchanged.</p>
 
   <!-- FIGURE:fig2-pipeline -->
 
-  <p>Building once and deploying many times is the most important property of the design. When each environment compiles its own artefact, the version tested in staging is not the version running in production, which is the source of the environment differences in the scenario. The supporting repository implements the first half of this pipeline today, as Figure 3 shows.</p>
+  <p>Building once and deploying many times is the most important property of the design. When each environment compiles its own artefact, the version tested in staging is not the version running in production, which is the source of the environment differences in the scenario. The supporting repository implements the first half of this pipeline, as Figure 3 shows.</p>
 
   <!-- FIGURE:fig3-ci-run -->
 
@@ -25,19 +25,18 @@
       <tr><td>End-to-end</td><td>Critical user journeys</td><td class="num">~10</td><td class="num">6 min</td><td>Post-deploy</td></tr>
     </tbody>
   </table>
-  <p>Nimbus will be tempted into the inverted pyramid, because it has no unit tests and browser tests appear to cover more ground each. But end-to-end tests are slow, fragile and poor at locating faults: a failing browser test reports that checkout is broken, a failing unit test names the function.</p>
+  <p>Nimbus will be tempted into the inverted pyramid, because it has no unit tests and browser tests appear to cover more ground each. But they are slow, fragile and poor at locating faults: a failing browser test reports that checkout is broken, a failing unit test names the function.</p>
 
   <h3>3.3 Quality gates</h3>
   <p>Each gate has a defined threshold and consequence, so quality is enforced by the pipeline rather than negotiated in a meeting.</p>
   <ul>
-    <li>Lint and type checking: any error fails the build.</li>
-    <li>Unit and integration tests: all must pass. Coverage is governed by a ratchet forbidding a decrease rather than a fixed percentage, because a fixed target invites tests written to satisfy the number instead of the risk.</li>
+        <li>Unit and integration tests: all must pass. Coverage is governed by a ratchet forbidding a decrease rather than a fixed percentage, because a fixed target invites tests written to satisfy the number instead of the risk.</li>
     <li>Dependency and container scanning: critical or high findings with an available fix block the merge; lower severities open a tracked issue.</li>
-    <li>Pipeline duration: a ten-minute budget from push to feedback. Exceeding it is a platform defect, since a slow pipeline gets worked around, and a gate that is worked around is not a gate.</li>
+    <li>Pipeline duration: a ten-minute budget from push to feedback. Exceeding it is a platform defect, since a slow pipeline gets worked around, and a gate worked around is not a gate.</li>
   </ul>
 
   <h3>3.4 What to automate first</h3>
-  <p>Automation competes for the same hours as product work, so candidates are scored rather than chosen by enthusiasm.</p>
+  <p>Automation competes for the same hours as product work, so candidates are scored.</p>
   <table class="data">
     <caption>Table 3 — Automation return on investment, first year</caption>
     <thead><tr><th>Candidate</th><th class="num">Frequency</th><th>Cost if manual</th><th class="num">Build effort</th><th>Decision</th></tr></thead>
@@ -49,15 +48,15 @@
       <tr><td>Removing the approval gate</td><td class="num">~2 / month</td><td>4 h/yr</td><td class="num">6 days</td><td>Defer</td></tr>
     </tbody>
   </table>
-  <p>The last row is the useful one. Automating the production approval gate saves almost nothing while a quarter of changes fail, and the human pause costs less than the incidents it prevents; it becomes worth removing once releases are unremarkable. Two candidates are staged until there is telemetry to drive them: machine-assisted test selection, and anomaly detection across metrics and logs, which is how a cloud-native estate with more signals than engineers keeps alerting manageable.</p>
+  <p>The last row is the useful one. Automating the production approval gate saves almost nothing while a quarter of changes fail, and the human pause costs less than the incidents it prevents; it is worth removing only once releases are unremarkable. Two candidates are staged until there is telemetry to drive them: machine-assisted test selection, and anomaly detection across metrics and logs, which is how a cloud-native estate with more signals than engineers keeps alerting manageable.</p>
 
   <h3>3.5 Release and rollback</h3>
-  <p>Production releases use blue-green deployment. Two identical environments sit behind a load balancer; the new version is deployed to the idle one, smoke-tested with no customer traffic, then made live by shifting the balancer. The previous environment stays warm for thirty minutes, so rollback is a traffic shift measured in seconds rather than a redeployment measured in hours.</p>
+  <p>Production releases use blue-green deployment. Two identical environments sit behind a load balancer; the new version is deployed to the idle one, smoke-tested with no customer traffic, then made live by shifting the balancer. The previous environment stays warm for thirty minutes, so rollback is a traffic shift, not a redeployment.</p>
 
   <div class="note">
     <span class="title">Canary is deferred, not rejected.</span>
     <p>Canary releasing requires weighted traffic routing, per-cohort metrics and enough request volume to reach a trustworthy judgement quickly; at Nimbus's traffic a one per cent canary would take days to produce a usable signal. A canary is also only as good as the observability evaluating it, and that does not yet exist, so today it would amount to a slower outage. It becomes the right choice once the objectives in Part 5 are running and traffic has grown.</p>
   </div>
 
-  <p>Blue-green protects the application tier but not the database, which leads to the practice that makes rollback genuine. Expand-and-contract migrations split a schema change across releases: an additive change both old and new code tolerate, then the code that uses it, then a backfill, and only later the removal of the old column. Without this, rollback plans are fiction, because code reverts in seconds and a destructive migration does not. Feature flags decouple deployment from release, keeping batches small and providing a second rollback path needing no deployment. Rollback is rehearsed monthly in staging, since an untested rollback is an assumption rather than a plan.</p>
+  <p>Blue-green protects the application tier but not the database, which leads to the practice that makes rollback genuine. Expand-and-contract migrations split a schema change across releases: an additive change both old and new code tolerate, then the code that uses it, a backfill, and only later the removal of the old column. Without this, rollback plans are fiction, because code reverts in seconds and a destructive migration does not. Feature flags decouple deployment from release, keeping batches small and providing a second rollback path. Rollback is rehearsed monthly in staging, since an untested rollback is an assumption rather than a plan.</p>
 </section>

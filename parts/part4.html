@@ -10,15 +10,15 @@
 
   <h3>4.2 Declarative code rather than a deployment script</h3>
   <p>Nimbus already has automation in <code>deploy.sh</code>. The distinction that matters is that the script is imperative: it lists steps from an assumed starting state, so it is not idempotent, and run against a drifted host it produces a result nobody predicted. Terraform is declarative, describing the intended end state and computing the difference, so it converges on the same result from any starting point.</p>
-  <p>The governance consequence is at least as valuable. A <code>terraform plan</code> in a pull request is a reviewable diff of what is about to change in production, before it changes, so infrastructure decisions become peer-reviewed, timestamped and attributable. That is a stronger control than a change-approval meeting, because it is precise, automatic and produces a record without anyone writing one.</p>
+  <p>The governance consequence is at least as valuable. A <code>terraform plan</code> in a pull request is a reviewable diff of what is about to change in production, before it changes, so infrastructure decisions become peer-reviewed, timestamped and attributable. That is a stronger control than a change-approval meeting, because it is precise and automatic.</p>
 
   <h3>4.3 Structure, state and environment parity</h3>
-  <p>Terraform is organised as reusable modules for network, service, database and observability, consumed by thin per-environment configurations differing only in variable values such as instance size. Staging is therefore not a hand-built approximation of production but the same definition with smaller numbers, which makes parity structural rather than a matter of discipline. State is stored remotely with locking, never on a laptop; it is both the record of what exists and a file of sensitive values, so it is encrypted, access-controlled and versioned.</p>
+  <p>Terraform is organised as reusable modules for network, service, database and observability, consumed by thin per-environment configurations differing only in variable values. Staging is therefore not a hand-built approximation of production but the same definition with smaller numbers, which makes parity structural rather than a matter of discipline. State is stored remotely with locking, never on a laptop; it is both the record of what exists and a file of sensitive values, so it is encrypted and versioned.</p>
 
   <!-- FIGURE:fig3-architecture -->
 
   <h3>4.4 Immutability and drift</h3>
-  <p>Servers are not modified in place. A change produces a new image and a new instance, and the old instance is destroyed. Rollback then becomes redeployment of the previous known-good artefact, and disaster recovery becomes a rebuild from code rather than the restoration of a machine nobody can reproduce. Drift is defended in four layers, because detection on its own does not prevent anything.</p>
+  <p>Servers are not modified in place. A change produces a new image and a new instance, and the old one is destroyed. Rollback becomes redeployment of the previous known-good artefact, and disaster recovery becomes a rebuild from code rather than restoring a machine nobody can reproduce. Drift is defended in four layers, because detection alone prevents nothing.</p>
 
   <table class="data">
     <caption>Table 4 — Layered defence against configuration drift</caption>
@@ -32,16 +32,16 @@
   </table>
 
   <h3>4.5 Containers as the unit of deployment</h3>
-  <p>The application is packaged as a container image, and that image is the deployable unit on a laptop, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build: dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base image running as an unprivileged user. This buys three things at once. The runtime image is small and quick to pull, it excludes build tooling and source and so presents less attack surface, and because the build is driven by a lockfile and a pinned base digest the same inputs produce the same image.</p>
+  <p>The application is packaged as a container image, the deployable unit on a laptop, in CI, in staging and in production. The Dockerfile in the supporting repository is a three-stage build: dependencies installed strictly from the lockfile, the application compiled, and a runtime stage containing only the standalone server on a minimal base image running as an unprivileged user. This buys three things at once: the runtime image is small and quick to pull, it excludes build tooling and source and so presents less attack surface, and because the build is driven by a lockfile and a pinned base digest the same inputs produce the same image.</p>
 
   <h3>4.6 Orchestration</h3>
   <p>Kubernetes would give Nimbus declarative rollouts, self-healing and autoscaling. It is still the wrong choice for this team this year.</p>
 
   <div class="note">
     <span class="title">Managed container runtime now; Kubernetes when it is earned.</span>
-    <p>Kubernetes is not a single tool but an operational surface: cluster upgrades, networking, ingress, access control, storage classes and a control plane to fund. Operating it competently requires an engineer with deep expertise, which would reproduce Nimbus's defining problem, a bus factor of one, at a higher level of abstraction and with worse failure modes. A managed container service provides declarative service definitions, health-based rolling deployments and autoscaling from the same image the pipeline already builds, for a fraction of that surface.</p>
+    <p>Kubernetes is not a single tool but an operational surface: cluster upgrades, networking, ingress, access control, storage classes and a control plane to fund. Operating it competently requires an engineer with deep expertise, which would reproduce Nimbus's defining problem, a bus factor of one, at a higher level of abstraction. A managed container service provides declarative service definitions, health-based rolling deployments and autoscaling from the same image, for a fraction of that surface.</p>
     <p>The decision is time-bound rather than permanent. It is revisited when any of four conditions holds: more than roughly ten services, ownership split across multiple teams, a real requirement for traffic shaping such as canary or a service mesh, or the hire of a dedicated platform engineer. Naming the conditions turns a preference into a decision a successor can evaluate.</p>
   </div>
 
-  <p>Environments follow the artefact. Compose runs it locally, CI runs it in ephemeral containers, and staging and production come from the same Terraform modules, with preview environments added once the foundations are stable.</p>
+  <p>Environments follow the artefact: Compose locally, ephemeral containers in CI, and staging and production from the same Terraform modules, with preview environments added once the foundations are stable.</p>
 </section>

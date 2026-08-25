@@ -6,11 +6,11 @@
   </div>
 
   <h3>2.1 The chosen workflow</h3>
-  <p>Nimbus adopts trunk-based development with short-lived branches. Every change is cut from <code>main</code>, lives on a branch for no more than two days, and returns through a pull request requiring a passing pipeline and one approving review. The trunk is protected: no direct pushes, no force-pushes, no merge while the build is red.</p>
+  <p>Nimbus adopts trunk-based development with short-lived branches. Every change is cut from <code>main</code>, lives on a branch for no more than two days, and returns through a pull request requiring a passing pipeline and one approving review. The trunk is protected: no direct pushes, no force-pushes, no merge on a red build.</p>
 
   <h3>2.2 Alternatives considered</h3>
-  <p>GitFlow is the obvious incumbent and the wrong fit here. Its <code>develop</code>, <code>release</code> and <code>hotfix</code> branches earn their keep when a vendor ships versioned software to customers who decide when to upgrade. Nimbus runs one production instance shared by every customer, so those branches provide no isolation while formalising the long-lived-branch behaviour that already produces a seventeen-day lead time.</p>
-  <p>Committing directly to the trunk without review is rejected for a different reason. Nimbus's defining risk is that one engineer holds all production knowledge, and a pull request is the cheapest knowledge-transfer mechanism available: it obliges a second person to read every change and records why it was made. Review here is redundancy in the team's understanding rather than a check on trust.</p>
+  <p>GitFlow is the obvious incumbent and the wrong fit here. Its <code>develop</code>, <code>release</code> and <code>hotfix</code> branches earn their keep when a vendor ships versioned software to customers who decide when to upgrade. Nimbus runs one shared production instance, so those branches provide no isolation while formalising the long-lived-branch behaviour that already produces a seventeen-day lead time.</p>
+  <p>Committing directly to the trunk without review is rejected for a different reason. Nimbus's defining risk is that one engineer holds all production knowledge, and a pull request is the cheapest knowledge-transfer mechanism available: it obliges a second person to read every change and records why it was made. Review is redundancy in the team's understanding rather than a check on trust.</p>
 
   <div class="note">
     <span class="title">Batch size is the mechanism.</span>
@@ -22,5 +22,5 @@
 
   <h3>2.4 Traceability</h3>
   <p>An unbroken chain connects a business request to a running process. The ticket identifier appears in the branch name, carries into the commit messages, is referenced by the pull request recording the review, is captured by the release tag, is baked into the image digest, and is finally reported by the service itself: <code>/api/health</code> returns the version it is executing, as shown in Figure 6. Any environment can therefore be traced to the commit that produced it without asking anyone.</p>
-  <p>That chain is also the audit trail. It answers what changed, when and who approved it in seconds rather than through a search of chat history, and produces the evidence a security questionnaire will later require at no extra cost.</p>
+  <p>That chain is also the audit trail: it answers what changed, when and who approved it in seconds rather than through a search of chat history, and produces the evidence a security questionnaire will later require.</p>
 </section>
