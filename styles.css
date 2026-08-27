@@ -237,7 +237,7 @@ code { font-family: Menlo, Consolas, "Courier New", monospace; font-size: 0.88em
   color: var(--muted);
 }
 
-/* ---------- institute assignment cover sheet ---------- */
+/* ---------- institute assignment cover sheet (official layout) ---------- */
 .coversheet {
   break-after: page;
   page-break-after: always;
@@ -245,61 +245,52 @@ code { font-family: Menlo, Consolas, "Courier New", monospace; font-size: 0.88em
   font-size: 11pt;
   color: #000;
 }
-.cs-title {
-  font-size: 16pt;
-  font-weight: 700;
-  font-style: italic;
-  text-align: center;
-  margin: 0 0 18pt;
-}
-.cs-instruction { font-weight: 700; font-style: italic; margin: 0 0 8pt; text-align: left; }
+
+.cs-head { width: 100%; border-collapse: collapse; margin-bottom: 16pt; }
+.cs-head td { border: 0; vertical-align: top; padding: 0; }
+.cs-head-logo { width: 26%; }
+.cs-head-logo img { height: 52pt; width: auto; }
+.cs-head-title { width: 36%; padding: 8pt 14pt 0 4pt !important; }
+.cs-head-title h1 { font-size: 14pt; font-weight: 700; margin: 0; text-align: left; white-space: nowrap; }
+.cs-head-accred { width: 38%; }
+
+.cs-accred { border-collapse: collapse; width: 100%; }
+.cs-accred td { border: 0.75pt solid #000; padding: 4pt 6pt; vertical-align: middle; }
+.cs-accred td:first-child { width: 74%; text-align: left; }
+.cs-accred img { height: 34pt; width: auto; }
+.cs-accred tr:last-child img { height: 30pt; }
+
+.cs-instruction { font-weight: 700; font-size: 10.5pt; margin: 0 0 8pt; text-align: left; }
+
 .cs-fields { width: 100%; border-collapse: collapse; }
 .cs-fields th, .cs-fields td {
   border: 0.75pt solid #000;
-  padding: 4pt 6pt;
+  padding: 3.5pt 6pt;
   text-align: left;
   vertical-align: top;
   font-size: 10.5pt;
 }
-.cs-fields th { width: 38%; font-weight: 700; font-style: italic; }
-.cs-declaration {
-  border: 0.75pt solid #000;
-  border-top: 0;
-  padding: 6pt 8pt 10pt;
-}
-.cs-dechead { font-weight: 700; font-style: italic; margin: 0 0 5pt; font-size: 10.5pt; }
-.cs-declaration ol { margin: 0; padding-left: 18pt; }
-.cs-declaration li {
-  font-weight: 700;
-  font-style: italic;
-  font-size: 10.5pt;
-  margin-bottom: 5pt;
-  text-align: left;
-}
-.cs-note {
-  border: 0.75pt solid #000;
-  border-top: 0;
-  padding: 5pt 6pt;
-  margin: 0;
-  font-size: 10pt;
-  text-align: left;
-}
+.cs-fields th { width: 33%; font-weight: 700; font-style: italic; }
 
-.cs-logos { margin-bottom: 16pt; }
-.cs-logos img { height: 58pt; width: auto; }
+.cs-declaration { border: 0.75pt solid #000; border-top: 0; padding: 7pt 8pt 9pt; }
+.cs-dechead { font-weight: 700; margin: 0 0 6pt; font-size: 10.5pt; text-align: left; }
+.cs-declaration ol { margin: 0; padding-left: 18pt; }
+.cs-declaration li { font-weight: 700; font-size: 10.5pt; margin-bottom: 4pt; text-align: justify; }
+
 .cs-signatures { width: 100%; border-collapse: collapse; }
 .cs-signatures td {
   border: 0.75pt solid #000;
   border-top: 0;
   width: 50%;
-  padding: 34pt 10pt 10pt;
+  padding: 46pt 10pt 8pt;
   text-align: center;
+  vertical-align: bottom;
 }
-.cs-sigline { border-bottom: 0.75pt solid #000; width: 62%; margin: 0 auto 4pt; height: 1pt; }
+.cs-sigline { border-bottom: 0.75pt solid #000; width: 46%; margin: 0 auto 3pt; height: 1pt; }
 .cs-siglabel { font-weight: 700; font-style: italic; font-size: 10.5pt; }
 .cs-sigdate { font-weight: 700; font-style: italic; font-size: 10.5pt; }
+.cs-signature { display: block; height: 34pt; width: auto; margin: 0 auto -4pt; }
 
-/* Standalone blank template: give the empty fields room to be filled in. */
-body > .coversheet .cs-fields td { height: 20pt; }
-
-.cs-signature { display: block; height: 34pt; width: auto; margin: 0 auto -6pt; }
+.cs-note { border: 0.75pt solid #000; border-top: 0; padding: 9pt 8pt 22pt; }
+.cs-note p { margin: 0 0 9pt; font-size: 10.5pt; text-align: left; }
+.cs-note p:last-child { margin-bottom: 0; }

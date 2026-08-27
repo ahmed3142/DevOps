@@ -305,58 +305,103 @@ def cell_text(cell, text, bold=False, italic=False, size=10.5, align=None, space
 
 
 def build_coversheet(doc):
-    """The institute's Assignment Cover Sheet, reproduced as the first page."""
-    t = plain(doc, "Assignment Cover Sheet", size=16, bold=True, italic=True,
-              align=WD_ALIGN_PARAGRAPH.CENTER, space_after=14)
-    t.runs[0].font.name = "Times New Roman"
+    """The institute's Assignment Cover Sheet, matching the official form."""
+    head = doc.add_table(rows=1, cols=3).rows[0]
+    for cell in head.cells:
+        box_borders(cell, edges=())
 
-    logo = ROOT / "logos" / "learnkey.png"
-    if logo.exists():
-        lp = doc.add_paragraph()
-        lp.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        lp.paragraph_format.space_after = Pt(12)
-        lp.add_run().add_picture(str(logo), height=Cm(1.75))
+    lk = ROOT / "logos" / "learnkey.png"
+    cell = head.cells[0]
+    cell.text = ""
+    par = cell.paragraphs[0]
+    par.paragraph_format.space_after = Pt(0)
+    if lk.exists():
+        par.add_run().add_picture(str(lk), height=Cm(1.55))
+
+    cell = head.cells[1]
+    cell.text = ""
+    par = cell.paragraphs[0]
+    par.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    par.paragraph_format.space_before = Pt(8)
+    r = par.add_run("Assignment Cover Sheet")
+    r.bold = True
+    r.font.size = Pt(14)
+    r.font.name = "Times New Roman"
+    r.font.color.rgb = RGBColor(0, 0, 0)
+
+    # OTHM and MFHEA sit in a ruled two-row box on the right of the official form.
+    acc_cell = head.cells[2]
+    acc_cell.text = ""
+    acc = acc_cell.add_table(rows=0, cols=2) if hasattr(acc_cell, "add_table") else None
+    if acc is None:
+        acc = doc.add_table(rows=0, cols=2)
+    for fname, height in (("othm.png", Cm(0.95)), ("mfhea.png", Cm(0.85))):
+        row = acc.add_row()
+        left, right = row.cells
+        left.text = ""
+        p2 = left.paragraphs[0]
+        p2.paragraph_format.space_before = Pt(3)
+        p2.paragraph_format.space_after = Pt(3)
+        path = ROOT / "logos" / fname
+        if path.exists():
+            p2.add_run().add_picture(str(path), height=height)
+        right.text = ""
+        box_borders(left)
+        box_borders(right)
+    acc.columns[0].width = Cm(4.6)
+    acc.columns[1].width = Cm(1.6)
+
+    head.cells[0].width = Cm(4.4)
+    head.cells[1].width = Cm(5.6)
+    head.cells[2].width = Cm(6.5)
+    plain(doc, space_after=8)
 
     i = plain(doc, "This cover sheet must be completed and added to the front of every assignment",
-              size=11, bold=True, italic=True, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=6)
+              size=10.5, bold=True, align=WD_ALIGN_PARAGRAPH.LEFT, space_after=6)
     i.runs[0].font.name = "Times New Roman"
 
     fields = [
         ("Learner Name and Surname:", "Imran Hossain Chowdhury", False),
         ("Learner Registration No.", "11248", False),
-        ("Study Centre Name", "Learn Key Institute", True),
-        ("Qualification Title", "Undergraduate Diploma in Software Design MQF (Lv.5) — Group A", False),
-        ("Unit Title", "DevOps Delivery Strategy — Individual Project & Portfolio", False),
+        ("Study Centre Name", "Learn Key", True),
+        ("Qualification Title", "Undergraduate Diploma in Software Design MQF (Lv.5) \u2014 Group A", False),
+        ("Unit Reference No.", "", False),
+        ("Unit Title", "DevOps Delivery Strategy \u2014 Individual Project & Portfolio", False),
         ("Submission Date", "29/08/2026", False),
     ]
     tbl = doc.add_table(rows=0, cols=2)
     for label, value, bold_value in fields:
-        r = tbl.add_row()
-        cell_text(r.cells[0], label, bold=True, italic=True)
-        cell_text(r.cells[1], value, bold=bold_value)
-        box_borders(r.cells[0]); box_borders(r.cells[1])
-    tbl.columns[0].width = Cm(6.2)
-    tbl.columns[1].width = Cm(10.3)
+        row = tbl.add_row()
+        cell_text(row.cells[0], label, bold=True, italic=True)
+        cell_text(row.cells[1], value, bold=bold_value)
+        box_borders(row.cells[0])
+        box_borders(row.cells[1])
+    tbl.columns[0].width = Cm(5.5)
+    tbl.columns[1].width = Cm(11.0)
 
     dec = doc.add_table(rows=1, cols=1).rows[0].cells[0]
     dec.text = ""
-    head = dec.paragraphs[0]
-    head.paragraph_format.space_after = Pt(4)
-    hr = head.add_run("Declaration of authenticity:")
-    hr.bold = True; hr.italic = True; hr.font.size = Pt(10.5); hr.font.name = "Times New Roman"
+    head_p = dec.paragraphs[0]
+    head_p.paragraph_format.space_after = Pt(5)
+    hr = head_p.add_run("Declaration of authenticity:")
+    hr.bold = True
+    hr.font.size = Pt(10.5)
+    hr.font.name = "Times New Roman"
     for n, line in enumerate([
         "I declare that the attached submission is my own original work. No significant part of it has been "
         "submitted for any other assignment and I have acknowledged in my notes and bibliography all written "
         "and electronic sources used.",
         "I acknowledge that my assignment will be subject to electronic scrutiny for academic honesty.",
         "I understand that failure to meet these guidelines may instigate the centre's malpractice procedures "
-        "and risk failure of the unit and/or qualification.",
+        "and risk failure of the unit and / or qualification.",
     ], start=1):
         par = dec.add_paragraph()
         par.paragraph_format.space_after = Pt(4)
         par.paragraph_format.left_indent = Cm(0.6)
         r = par.add_run(f"{n}.  {line}")
-        r.bold = True; r.italic = True; r.font.size = Pt(10.5); r.font.name = "Times New Roman"
+        r.bold = True
+        r.font.size = Pt(10.5)
+        r.font.name = "Times New Roman"
     box_borders(dec)
 
     signature = next((ROOT / "logos" / n for n in ("signature.png", "signature.jpg", "signature.jpeg")
@@ -372,8 +417,8 @@ def build_coversheet(doc):
             spacer.paragraph_format.space_after = Pt(0)
             spacer.add_run().add_picture(str(signature), height=Cm(1.2))
         else:
-            spacer.paragraph_format.space_after = Pt(20)
-        for text, is_rule in (("__________________________", True), (label, False), ("Date:", False)):
+            spacer.paragraph_format.space_after = Pt(28)
+        for text, is_rule in (("_________________", True), (label, False), ("Date:", False)):
             par = cell.add_paragraph()
             par.alignment = WD_ALIGN_PARAGRAPH.CENTER
             par.paragraph_format.space_after = Pt(1)
@@ -385,8 +430,15 @@ def build_coversheet(doc):
         box_borders(cell)
 
     note = doc.add_table(rows=1, cols=1).rows[0].cells[0]
-    cell_text(note, "Note: Assignments must be submitted in typed PDF format only; handwritten assignments "
-                    "are not accepted.", size=10)
+    note.text = ""
+    for text in ("Note:", "Assignments must be submitted in typed PDF format only; handwritten "
+                          "assignments are not accepted."):
+        par = note.paragraphs[0] if text == "Note:" else note.add_paragraph()
+        par.paragraph_format.space_after = Pt(8)
+        r = par.add_run(text)
+        r.font.size = Pt(10.5)
+        r.font.name = "Times New Roman"
+        r.font.color.rgb = RGBColor(0, 0, 0)
     box_borders(note)
 
     doc.add_page_break()
