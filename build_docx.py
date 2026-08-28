@@ -363,7 +363,7 @@ def build_coversheet(doc):
     fields = [
         ("Learner Name and Surname:", "Imran Hossain Chowdhury", False),
         ("Learner Registration No.", "11248", False),
-        ("Study Centre Name", "Learn Key", True),
+        ("Study Centre Name", "Learn Key Institute", True),
         ("Qualification Title", "Undergraduate Diploma in Software Design MQF (Lv.5) \u2014 Group A", False),
         ("Unit Reference No.", "", False),
         ("Unit Title", "DevOps Delivery Strategy \u2014 Individual Project & Portfolio", False),

@@ -18,7 +18,7 @@ OUT = Path(__file__).parent / "out" / "Assignment_Cover_Sheet_BLANK.docx"
 FIELDS = [
     ("Learner Name and Surname:", "", False),
     ("Learner Registration No.", "", False),
-    ("Study Centre Name", "Learn Key", True),
+    ("Study Centre Name", "Learn Key Institute", True),
     ("Qualification Title", "", False),
     ("Unit Reference No.", "", False),
     ("Unit Title", "", False),
