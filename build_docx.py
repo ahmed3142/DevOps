@@ -365,8 +365,8 @@ def build_coversheet(doc):
         ("Learner Registration No.", "11248", False),
         ("Study Centre Name", "Learn Key Institute", True),
         ("Qualification Title", "Undergraduate Diploma in Software Design MQF (Lv.5) \u2014 Group A", False),
-        ("Unit Reference No.", "", False),
-        ("Unit Title", "DevOps Delivery Strategy \u2014 Individual Project & Portfolio", False),
+        ("Unit Reference No.", "ICT- UCCSMU6-LKI/MQF (Lv.5)", False),
+        ("Unit Title", "AWARD IN Introduction to DevOps: Principles and Practices", False),
         ("Submission Date", "29/08/2026", False),
     ]
     tbl = doc.add_table(rows=0, cols=2)
